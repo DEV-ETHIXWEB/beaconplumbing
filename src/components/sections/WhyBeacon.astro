@@ -4,23 +4,28 @@ import award from '../../assets/brand/award-seattle-times-2023.webp';
 import { business } from '../../data/business';
 import Container from '../ui/Container.astro';
 import SectionHeading from '../ui/SectionHeading.astro';
+import Icon3D, { type IconName } from '../ui/Icon3D.astro';
 
-const reasons = [
+const reasons: { title: string; description: string; icon?: IconName }[] = [
   {
     title: 'Licensed &amp; Fully Insured',
-    description: `Washington Contractors License #${business.license.number} &mdash; licensed, bonded, and insured on every job.`,
+    description: `Washington Contractors License #${business.license.number}. Licensed, bonded, and insured on every job.`,
+    icon: 'licensed-insured',
   },
   {
     title: 'Family Owned Since 1999',
     description: `${business.founder} founded Beacon to bring honest, dependable service to Puget Sound homeowners.`,
+    icon: 'home-rewiring',
   },
   {
     title: 'Available Around the Clock',
-    description: '24/7 emergency response, 365 days a year &mdash; plumbing problems don’t wait for business hours.',
+    description: '24/7 emergency response, 365 days a year. Plumbing problems don’t wait for business hours.',
+    icon: '24-7-emergency',
   },
   {
     title: 'Military Discounts',
     description: 'We proudly offer discounts for active-duty and veteran military members.',
+    icon: 'upfront-pricing',
   },
 ];
 ---
@@ -31,18 +36,22 @@ const reasons = [
       <SectionHeading
         eyebrow="Why Beacon"
         title="A local team Puget Sound has trusted for 25+ years"
-        description="Beacon Plumbing has been a fixture in the Seattle area since 1999 — built on honest pricing, licensed technicians, and showing up when it matters."
+        description="Beacon Plumbing has been a fixture in the Seattle area since 1999, built on honest pricing, licensed technicians, and showing up when it matters."
       />
 
-      <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <div class="reveal-group mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
         {reasons.map((reason) => (
-          <div class="flex gap-4 rounded-xl border border-ink-100 bg-white p-5 shadow-sm">
-            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-              <svg viewBox="0 0 20 20" class="h-5 w-5" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0L3.3 9.7a1 1 0 1 1 1.4-1.4L8 11.6l6.8-6.8a1 1 0 0 1 1.4 0z" clip-rule="evenodd" />
-              </svg>
-            </div>
-            <div>
+          <div class="reveal-item spotlight-card flex gap-4 rounded-xl border border-ink-100 bg-white p-5 shadow-sm transition-shadow duration-300 hover:shadow-md">
+            {reason.icon ? (
+              <Icon3D name={reason.icon} class="relative h-14 w-auto shrink-0" />
+            ) : (
+              <div class="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+                <svg viewBox="0 0 20 20" class="h-5 w-5" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0L3.3 9.7a1 1 0 1 1 1.4-1.4L8 11.6l6.8-6.8a1 1 0 0 1 1.4 0z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            )}
+            <div class="relative">
               <h3 class="font-display font-semibold text-ink-900" set:html={reason.title} />
               <p class="mt-1 text-sm leading-relaxed text-ink-500" set:html={reason.description} />
             </div>
@@ -51,8 +60,8 @@ const reasons = [
       </div>
     </div>
 
-    <div class="flex flex-row items-center gap-4 lg:flex-col lg:items-start">
-      <Image src={award} alt="Best in the PNW — The Seattle Times, Winner 2023, The People's Choice" width={140} height={140} class="h-28 w-28 shrink-0 sm:h-32 sm:w-32" />
+    <div class="reveal-item flex flex-row items-center gap-4 lg:flex-col lg:items-start">
+      <Image src={award} alt="Best in the PNW, The Seattle Times, Winner 2023, The People's Choice" width={140} height={140} class="h-28 w-28 shrink-0 sm:h-32 sm:w-32" />
       <p class="max-w-40 text-sm font-medium text-ink-500">
         Voted Best in the PNW by The Seattle Times, 2023 People&rsquo;s Choice
       </p>

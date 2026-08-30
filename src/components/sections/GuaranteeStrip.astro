@@ -1,0 +1,24 @@
+---
+import Container from '../ui/Container.astro';
+import Icon3D from '../ui/Icon3D.astro';
+
+const items = [
+  { icon: '90-minute-response', label: '90-Minute Response' },
+  { icon: 'upfront-pricing', label: 'Upfront Pricing' },
+  { icon: 'no-trip-charges', label: 'No Trip Charges' },
+  { icon: '1-year-guarantee', label: '1-Year Guarantee' },
+] as const;
+---
+
+<section class="border-y border-ink-100 bg-white py-10">
+  <Container>
+    <div class="reveal-group grid grid-cols-2 gap-6 sm:grid-cols-4">
+      {items.map((item) => (
+        <div class="spotlight-card reveal-item flex flex-col items-center gap-2 rounded-xl p-4 text-center transition-colors duration-300 hover:bg-ink-50">
+          <Icon3D name={item.icon} class="relative h-16 w-auto" />
+          <span class="relative font-display text-sm font-semibold text-ink-800">{item.label}</span>
+        </div>
+      ))}
+    </div>
+  </Container>
+</section>

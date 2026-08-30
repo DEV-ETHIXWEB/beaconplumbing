@@ -1,15 +1,14 @@
 ---
-import { Image } from 'astro:assets';
-import logo from '../../assets/brand/logo.webp';
 import { business } from '../../data/business';
 import { mainNav } from '../../data/navigation';
 import Container from '../ui/Container.astro';
 import Button from '../ui/Button.astro';
+import Logo from '../ui/Logo.astro';
 import MobileNav from './MobileNav';
 ---
 
-<header class="sticky top-0 z-50 border-b border-ink-100 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/80">
-  <div class="hidden bg-brand-900 text-white lg:block">
+<header id="site-header" class="sticky top-0 z-50 border-b border-ink-100 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/80">
+  <div class="site-header__utility hidden bg-brand-900 text-white xl:block">
     <Container class="flex items-center justify-between py-1.5 text-xs">
       <p class="font-medium tracking-wide">
         24/7 Emergency Service &middot; Licensed, Bonded &amp; Insured &middot; Serving Puget Sound Since {business.foundingYear}
@@ -20,17 +19,17 @@ import MobileNav from './MobileNav';
     </Container>
   </div>
 
-  <Container class="flex min-w-0 items-center justify-between gap-2 py-3 lg:gap-4">
-    <a href="/" class="flex shrink-0 items-center" aria-label={`${business.name} home`}>
-      <Image src={logo} alt={business.name} height={44} width={168} class="h-9 w-auto sm:h-11" />
+  <Container class="site-header__main flex min-w-0 items-center justify-between gap-3 py-3">
+    <a href="/" class="flex h-9 shrink-0 items-center sm:h-10" aria-label={`${business.name} home`}>
+      <Logo variant="light" />
     </a>
 
-    <nav class="hidden min-w-0 items-center gap-0.5 lg:flex xl:gap-1" aria-label="Primary">
+    <nav class="hidden min-w-0 items-center gap-0.5 xl:flex" aria-label="Primary">
       {mainNav.map((item) => (
         <div class="group relative">
           <a
             href={item.href}
-            class="flex items-center gap-1 whitespace-nowrap rounded-md px-2 py-2 text-sm font-semibold text-ink-700 transition-colors hover:bg-brand-50 hover:text-brand-600 xl:px-3"
+            class="flex items-center gap-1 whitespace-nowrap rounded-md px-2.5 py-2 text-sm font-semibold text-ink-700 transition-colors hover:bg-brand-50 hover:text-brand-600"
           >
             {item.label}
             {item.children && (
@@ -55,14 +54,62 @@ import MobileNav from './MobileNav';
       ))}
     </nav>
 
-    <div class="flex items-center gap-3">
-      <Button href={business.phone.href} variant="primary" icon="phone" class="max-sm:hidden lg:hidden xl:!inline-flex">
-        Call Now
-      </Button>
-      <Button href="/contact" variant="outline" class="max-xl:hidden">
-        Request Service
-      </Button>
+    <div class="flex shrink-0 items-center gap-2.5">
+      <div class="hidden sm:block">
+        <Button href={business.phone.href} variant="primary" icon="phone" size="md">Call Now</Button>
+      </div>
       <MobileNav client:load business={business} mainNav={mainNav} />
     </div>
   </Container>
 </header>
+
+<style>
+  .site-header__utility {
+    overflow: hidden;
+    max-height: 2.5rem;
+    opacity: 1;
+    transition: max-height 300ms ease, opacity 200ms ease, padding-block 300ms ease;
+  }
+
+  .site-header__main {
+    transition: padding-block 300ms ease;
+  }
+
+  header.is-scrolled .site-header__utility {
+    max-height: 0;
+    opacity: 0;
+  }
+
+  header.is-scrolled .site-header__main {
+    padding-block: 0.625rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-header__utility,
+    .site-header__main {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const header = document.getElementById('site-header');
+  if (header) {
+    let ticking = false;
+    const updateState = () => {
+      header.classList.toggle('is-scrolled', window.scrollY > 24);
+      ticking = false;
+    };
+    updateState();
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          requestAnimationFrame(updateState);
+          ticking = true;
+        }
+      },
+      { passive: true }
+    );
+  }
+</script>

@@ -25,7 +25,10 @@ const base =
 
 const variants: Record<Variant, string> = {
   primary:
-    'bg-accent-500 text-white shadow-sm hover:bg-accent-600 hover:shadow-md active:bg-accent-700',
+    // accent-600, not -500: white-on-accent-500 measures 4.35:1, just under
+    // WCAG AA's 4.5:1 for normal-size text. accent-600 clears it (5.88:1)
+    // while staying clearly the same brand red.
+    'bg-accent-600 text-white shadow-sm hover:bg-accent-700 hover:shadow-md active:bg-accent-800',
   secondary:
     'bg-brand-500 text-white shadow-sm hover:bg-brand-600 hover:shadow-md active:bg-brand-700',
   outline:

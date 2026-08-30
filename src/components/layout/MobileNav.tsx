@@ -35,7 +35,7 @@ export default function MobileNav({ business, mainNav }: Props) {
         aria-expanded={open}
         aria-controls="mobile-nav-drawer"
         aria-label="Open menu"
-        className="inline-flex h-10 w-10 items-center justify-center rounded-md text-ink-700 hover:bg-ink-100 lg:hidden"
+        className="inline-flex h-11 w-11 items-center justify-center rounded-md text-ink-700 hover:bg-ink-100 xl:hidden"
       >
         <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
           <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />
@@ -43,7 +43,7 @@ export default function MobileNav({ business, mainNav }: Props) {
       </button>
 
       {open && createPortal(
-        <div className="fixed inset-0 z-100 lg:hidden">
+        <div className="fixed inset-0 z-100 xl:hidden">
           <div
             className="absolute inset-0 bg-ink-950/50 animate-fade-up"
             onClick={() => setOpen(false)}
@@ -101,7 +101,7 @@ export default function MobileNav({ business, mainNav }: Props) {
             <div className="border-t border-ink-100 p-4">
               <a
                 href={business.phone.href}
-                className="flex w-full items-center justify-center gap-2 rounded-md bg-accent-500 px-5 py-3 font-display font-semibold text-white"
+                className="flex w-full items-center justify-center gap-2 rounded-md bg-accent-600 px-5 py-3 font-display font-semibold text-white"
               >
                 Call {business.phone.display}
               </a>

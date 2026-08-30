@@ -43,10 +43,11 @@ export default function FAQAccordion({ items }: Props) {
               id={panelId}
               role="region"
               aria-labelledby={buttonId}
-              hidden={!isOpen}
-              className="px-5 pb-4 text-sm leading-relaxed text-ink-500"
+              className={`grid transition-[grid-template-rows] duration-300 ease-out ${isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
             >
-              {item.answer}
+              <div className="overflow-hidden">
+                <p className="px-5 pb-4 text-sm leading-relaxed text-ink-500">{item.answer}</p>
+              </div>
             </div>
           </div>
         );

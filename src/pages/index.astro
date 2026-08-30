@@ -9,6 +9,7 @@ import logoUrl from '../assets/brand/logo.webp';
 import Hero from '../components/sections/Hero.astro';
 import CoreServices from '../components/sections/CoreServices.astro';
 import EmergencyBand from '../components/sections/EmergencyBand.astro';
+import GuaranteeStrip from '../components/sections/GuaranteeStrip.astro';
 import WhyBeacon from '../components/sections/WhyBeacon.astro';
 import ServiceAreasPreview from '../components/sections/ServiceAreasPreview.astro';
 import Financing from '../components/sections/Financing.astro';
@@ -33,7 +34,7 @@ const schema = localBusinessSchema({
 <Layout>
   <Fragment slot="head">
     <SEOHead
-      title="Beacon Plumbing | Seattle Plumber, Electrician & HVAC — 24/7 Emergency Service"
+      title="Beacon Plumbing | Seattle Plumber, Electrician & HVAC, 24/7 Emergency Service"
       description="Beacon Plumbing has served the greater Seattle area since 1999. Licensed plumbing, heating, electrical & septic service with 24/7 emergency response. Stop Freakin'... Call Beacon!"
       path="/"
       jsonLd={schema}
@@ -43,6 +44,7 @@ const schema = localBusinessSchema({
   <Hero />
   <CoreServices />
   <EmergencyBand />
+  <GuaranteeStrip />
   <WhyBeacon />
   <ServiceAreasPreview />
   <Financing />

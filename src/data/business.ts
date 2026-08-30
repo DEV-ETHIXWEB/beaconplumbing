@@ -48,15 +48,15 @@ export const business = {
   },
 
   trustBadges: [
-    { label: 'Licensed, Bonded & Insured' },
-    { label: 'Family Owned & Operated' },
-    { label: '24/7 Emergency Response' },
-    { label: 'Same-Day Service Available' },
-  ],
+    { label: 'Licensed, Bonded & Insured', icon: 'licensed-insured' },
+    { label: 'Family Owned & Operated', icon: undefined },
+    { label: '24/7 Emergency Response', icon: '24-7-emergency' },
+    { label: 'Same-Day Service Available', icon: 'same-day-service' },
+  ] as { label: string; icon?: import('../components/ui/Icon3D.astro').IconName }[],
 
   awards: [
     {
-      name: 'Best in the PNW — The Seattle Times, Winner 2023 (The People\u2019s Choice)',
+      name: 'Best in the PNW, The Seattle Times, Winner 2023 (The People\u2019s Choice)',
       imagePath: 'BPNW-Seattle-Times-Winner-2023.webp',
     },
   ],

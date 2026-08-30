@@ -2,6 +2,7 @@
 import Container from '../ui/Container.astro';
 import SectionHeading from '../ui/SectionHeading.astro';
 import Button from '../ui/Button.astro';
+import ServiceAreaMap from './ServiceAreaMap.astro';
 import { serviceAreas, regions } from '../../data/locations';
 ---
 
@@ -10,14 +11,18 @@ import { serviceAreas, regions } from '../../data/locations';
     <SectionHeading
       eyebrow="Where We Work"
       title="Serving the Greater Puget Sound Region"
-      description="From Seattle to Tacoma, Everett to Bremerton — Beacon dispatches licensed technicians across dozens of communities."
+      description="From Seattle to Tacoma, Everett to Bremerton, Beacon dispatches licensed technicians across dozens of communities."
       titleClass="text-white"
       class="[&_p]:text-brand-200"
     />
 
-    <div class="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5">
+    <div class="reveal-item mt-10 rounded-2xl bg-white p-3 shadow-xl sm:p-4">
+      <ServiceAreaMap compact />
+    </div>
+
+    <div class="reveal-group mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5">
       {regions.map((region) => (
-        <div>
+        <div class="reveal-item">
           <h3 class="mb-3 text-xs font-bold uppercase tracking-widest text-gold-500">{region}</h3>
           <ul class="flex flex-col gap-2 text-sm text-brand-100">
             {serviceAreas

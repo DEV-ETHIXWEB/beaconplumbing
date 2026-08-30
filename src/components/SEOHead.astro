@@ -1,6 +1,6 @@
 ---
 import { siteUrl, siteName, defaultOgImage } from '../data/site';
-import { buildCanonicalUrl } from '../lib/seo';
+import { buildCanonicalUrl, safeJsonLdStringify } from '../lib/seo';
 
 interface Props {
   title: string;
@@ -36,5 +36,5 @@ const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 <meta name="twitter:image" content={absoluteOgImage} />
 
 {schemas.map((schema) => (
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
+  <script type="application/ld+json" is:inline set:html={safeJsonLdStringify(schema)} />
 ))}

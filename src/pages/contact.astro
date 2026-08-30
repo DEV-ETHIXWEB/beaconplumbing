@@ -11,7 +11,7 @@ import { business } from '../data/business';
   <Fragment slot="head">
     <SEOHead
       title="Contact Beacon Plumbing | Request Service in Seattle, WA"
-      description="Contact Beacon Plumbing for plumbing, heating, electrical, and septic service across the greater Seattle area. Call (206) 800-6269 or request service online."
+      description={`Contact Beacon Plumbing for plumbing, heating, electrical, and septic service across the greater Seattle area. Call ${business.phone.display} or request service online.`}
       path="/contact"
     />
   </Fragment>
@@ -52,7 +52,7 @@ import { business } from '../data/business';
             {business.address.street}<br />
             {business.address.city}, {business.address.state} {business.address.zip}
           </a>
-          <p class="mt-1 text-sm text-ink-400">Get directions &rarr;</p>
+          <p class="mt-1 text-sm text-ink-500">Get directions &rarr;</p>
         </div>
 
         <div>

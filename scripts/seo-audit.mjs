@@ -93,9 +93,12 @@ for (const file of htmlFiles) {
   }
 
   // --- Image alt text ---
+  // Astro compiles alt="" down to a bare valueless `alt` attribute (identical
+  // to alt="" per the HTML spec — both mean "decorative, no value"), so this
+  // must match both forms rather than just alt="...".
   const imgMatches = [...html.matchAll(/<img\s+[^>]*>/gi)];
   for (const [imgTag] of imgMatches) {
-    if (!/\salt="/.test(imgTag)) {
+    if (!/\salt(="|[\s>])/.test(imgTag)) {
       warnings.push(`${url}: <img> missing alt attribute — ${imgTag.slice(0, 80)}...`);
     }
   }

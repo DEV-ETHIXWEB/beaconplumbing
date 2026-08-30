@@ -24,3 +24,8 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Internal working materials — source assets and audit docs, not part of
+# the deployable site (icons are already extracted into src/assets/icons/).
+/Beacon Plumbing/
+/MY SKILLS _AKASH/

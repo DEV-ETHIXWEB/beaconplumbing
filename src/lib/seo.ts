@@ -1,6 +1,14 @@
 // Centralized SEO helpers: metadata + JSON-LD structured data builders.
 // All business facts are passed in from src/data — nothing here is hardcoded.
 
+// Escapes `<` so a JSON-LD payload can never prematurely close its enclosing
+// <script> tag (e.g. if a business string ever contained "</script>").
+// Defensive hardening only — all current schema inputs are static data, not
+// user input — but this is what every JSON-LD-in-<script> guide recommends.
+export function safeJsonLdStringify(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, '\\u003c');
+}
+
 export interface BreadcrumbItem {
   name: string;
   url: string;

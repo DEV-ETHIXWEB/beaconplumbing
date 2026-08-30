@@ -3,13 +3,13 @@ import Container from '../ui/Container.astro';
 import SectionHeading from '../ui/SectionHeading.astro';
 import FAQAccordion from './FAQAccordion';
 import { generalFaqs } from '../../data/faqs';
-import { faqPageSchema } from '../../lib/seo';
+import { faqPageSchema, safeJsonLdStringify } from '../../lib/seo';
 
 const schema = faqPageSchema(generalFaqs);
 ---
 
 <section class="bg-ink-50 py-16 sm:py-24">
-  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
+  <script type="application/ld+json" is:inline set:html={safeJsonLdStringify(schema)} />
   <Container class="mx-auto max-w-3xl">
     <SectionHeading
       eyebrow="Common Questions"

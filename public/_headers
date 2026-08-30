@@ -1,0 +1,15 @@
+# Security headers for static hosts that read this file (Netlify, Cloudflare
+# Pages). If deploying to Vercel instead, port these into vercel.json's
+# "headers" array — this file is ignored there.
+#
+# IMPORTANT: once a real contact-form endpoint (PUBLIC_CONTACT_FORM_ENDPOINT)
+# is chosen, add its origin to BOTH connect-src and form-action below, or the
+# form's fetch() call will be silently blocked by this CSP.
+
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.basemaps.cartocdn.com; font-src 'self'; media-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'

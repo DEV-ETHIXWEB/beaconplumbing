@@ -3,13 +3,14 @@ import Layout from '../../layouts/Layout.astro';
 import SEOHead from '../../components/SEOHead.astro';
 import PageHero from '../../components/sections/PageHero.astro';
 import Container from '../../components/ui/Container.astro';
+import ServiceAreaMap from '../../components/sections/ServiceAreaMap.astro';
 import { serviceAreas, regions } from '../../data/locations';
 ---
 
 <Layout>
   <Fragment slot="head">
     <SEOHead
-      title="Service Areas | Beacon Plumbing — Serving the Greater Seattle Area"
+      title="Service Areas | Beacon Plumbing, Serving the Greater Seattle Area"
       description="Beacon Plumbing provides licensed plumbing, heating, electrical, and septic service across the greater Seattle area, including the Eastside, South King & Pierce County, Snohomish County, and Kitsap Peninsula."
       path="/service-areas"
     />
@@ -23,6 +24,12 @@ import { serviceAreas, regions } from '../../data/locations';
   />
 
   <section class="bg-white py-16 sm:py-20">
+    <Container>
+      <ServiceAreaMap />
+    </Container>
+  </section>
+
+  <section class="bg-ink-50 py-16 sm:py-20">
     <Container class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-5">
       {regions.map((region) => (
         <div>

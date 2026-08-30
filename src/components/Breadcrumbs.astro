@@ -1,6 +1,6 @@
 ---
 import { siteUrl } from '../data/site';
-import { breadcrumbListSchema, type BreadcrumbItem } from '../lib/seo';
+import { breadcrumbListSchema, safeJsonLdStringify, type BreadcrumbItem } from '../lib/seo';
 
 interface Props {
   items: BreadcrumbItem[];
@@ -11,7 +11,7 @@ const allItems: BreadcrumbItem[] = [{ name: 'Home', url: '/' }, ...items];
 const schema = breadcrumbListSchema(allItems, siteUrl);
 ---
 
-<script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
+<script type="application/ld+json" is:inline set:html={safeJsonLdStringify(schema)} />
 
 <nav aria-label="Breadcrumb" class="text-sm">
   <ol class="flex flex-wrap items-center gap-1.5 text-ink-500">

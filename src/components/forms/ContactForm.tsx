@@ -104,7 +104,7 @@ export default function ContactForm() {
   if (status === 'success') {
     return (
       <div role="status" className="rounded-xl border border-brand-200 bg-brand-50 p-8 text-center">
-        <p className="font-display text-lg font-semibold text-brand-700">Thank you — we received your request.</p>
+        <p className="font-display text-lg font-semibold text-brand-700">Thank you. We received your request.</p>
         <p className="mt-2 text-sm text-ink-500">A member of our team will reach out shortly.</p>
       </div>
     );
@@ -207,32 +207,43 @@ export default function ContactForm() {
         )}
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor={`${formId}-service`} className="text-sm font-medium text-ink-700">
+      <div className="flex flex-col gap-2">
+        <span id={`${formId}-service-label`} className="text-sm font-medium text-ink-700">
           What do you need help with?
-        </label>
-        <select
-          id={`${formId}-service`}
-          name="service"
-          required
+        </span>
+        <div
+          role="radiogroup"
+          aria-labelledby={`${formId}-service-label`}
           aria-invalid={Boolean(fieldError('service'))}
           aria-describedby={fieldError('service') ? `${formId}-service-error` : undefined}
-          value={values.service}
-          onChange={(e) => handleChange('service', e.target.value)}
-          onBlur={() => handleBlur('service')}
-          className={`rounded-md border bg-white px-3.5 py-2.5 text-sm text-ink-900 outline-none transition-colors focus:ring-2 ${
-            fieldError('service') ? 'border-accent-400 focus:border-accent-500 focus:ring-accent-100' : 'border-ink-200 focus:border-brand-500 focus:ring-brand-100'
-          }`}
+          className={`grid grid-cols-2 gap-2 sm:grid-cols-3 ${fieldError('service') ? 'rounded-md ring-1 ring-accent-400' : ''}`}
         >
-          <option value="" disabled>
-            Select a service
-          </option>
-          {services.map((service) => (
-            <option key={service} value={service}>
-              {service}
-            </option>
-          ))}
-        </select>
+          {services.map((service) => {
+            const checked = values.service === service;
+            return (
+              <label
+                key={service}
+                className={`flex cursor-pointer items-center justify-center rounded-md border px-3 py-2.5 text-center text-sm font-medium transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-brand-500 ${
+                  checked
+                    ? 'border-brand-500 bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-500'
+                    : 'border-ink-200 text-ink-700 hover:border-brand-300 hover:bg-brand-50/60'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="service"
+                  value={service}
+                  checked={checked}
+                  required
+                  onChange={() => handleChange('service', service)}
+                  onBlur={() => handleBlur('service')}
+                  className="sr-only"
+                />
+                {service}
+              </label>
+            );
+          })}
+        </div>
         {fieldError('service') && (
           <p id={`${formId}-service-error`} className="text-xs text-accent-600">{fieldError('service')}</p>
         )}
@@ -255,11 +266,11 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={status === 'submitting'}
-        className="mt-1 inline-flex items-center justify-center rounded-md bg-accent-500 px-6 py-3 font-display font-semibold text-white transition-colors hover:bg-accent-600 disabled:opacity-60"
+        className="mt-1 inline-flex items-center justify-center rounded-md bg-accent-600 px-6 py-3 font-display font-semibold text-white transition-colors hover:bg-accent-700 disabled:opacity-60"
       >
         {status === 'submitting' ? 'Submitting…' : 'Request Service'}
       </button>
-      <p className="text-xs text-ink-400">
+      <p className="text-xs text-ink-500">
         For urgent issues, please call us directly rather than submitting a form.
       </p>
     </form>

@@ -1,0 +1,118 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SEOHead from '../components/SEOHead.astro';
+import PageHero from '../components/sections/PageHero.astro';
+import Container from '../components/ui/Container.astro';
+import { business } from '../data/business';
+
+const lastUpdated = 'TODO: VERIFY — set the actual publish/review date';
+---
+
+<Layout>
+  <Fragment slot="head">
+    <SEOHead
+      title="Terms of Use | Beacon Plumbing"
+      description="Terms of use for the Beacon Plumbing website."
+      path="/terms-of-use"
+    />
+  </Fragment>
+
+  <PageHero title="Terms of Use" breadcrumbs={[{ name: 'Terms of Use', url: '/terms-of-use' }]} />
+
+  <section class="bg-white py-16 sm:py-20">
+    <Container class="mx-auto max-w-3xl">
+      <div class="rounded-lg border border-gold-500/40 bg-gold-500/10 px-5 py-4 text-sm text-ink-700">
+        TODO: VERIFY — this is a standard draft, not a legal-reviewed document. Have {business.name}'s
+        attorney review and adjust before this page goes live.
+      </div>
+
+      <div class="prose-content mt-8 flex flex-col gap-6 text-ink-600">
+        <p class="text-sm text-ink-500">Last updated: {lastUpdated}</p>
+
+        <p class="leading-relaxed">
+          These Terms of Use govern your access to and use of the {business.name} website (the "Site"). By using
+          the Site, you agree to these terms. If you don't agree, please don't use the Site.
+        </p>
+
+        <div>
+          <h2 class="font-display text-lg font-bold text-ink-900">Use of the Site</h2>
+          <p class="mt-2 leading-relaxed">
+            The Site is provided for informational purposes, to help you learn about {business.name}'s services and
+            request service. You agree to use the Site only for lawful purposes and not to interfere with its
+            operation, security, or availability.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-lg font-bold text-ink-900">No Service Contract</h2>
+          <p class="mt-2 leading-relaxed">
+            Content on this Site, including pricing references, service descriptions, and availability, is
+            informational and does not itself form a contract for service. Actual pricing, scope of work, and
+            scheduling are confirmed directly with you before any work begins.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-lg font-bold text-ink-900">Accuracy of Information</h2>
+          <p class="mt-2 leading-relaxed">
+            We try to keep information on the Site accurate and current, but we don't guarantee that all content
+            is complete, current, or error-free. {business.name} may update or correct content at any time without
+            notice.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-lg font-bold text-ink-900">Intellectual Property</h2>
+          <p class="mt-2 leading-relaxed">
+            The Site's text, graphics, logos, and other content are owned by {business.name} or its licensors and
+            are protected by applicable intellectual property laws. You may not copy, reproduce, or redistribute
+            Site content without our prior written permission.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-lg font-bold text-ink-900">Third-Party Links</h2>
+          <p class="mt-2 leading-relaxed">
+            The Site may link to third-party websites (for example, financing or review platforms) that we don't
+            control. We aren't responsible for the content, accuracy, or practices of those third-party sites.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-lg font-bold text-ink-900">Limitation of Liability</h2>
+          <p class="mt-2 leading-relaxed">
+            To the fullest extent permitted by law, {business.name} isn't liable for any indirect, incidental, or
+            consequential damages arising from your use of the Site. This does not limit any warranty or liability
+            related to services actually performed at your property, which are governed by your separate service
+            agreement with us.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-lg font-bold text-ink-900">Changes to These Terms</h2>
+          <p class="mt-2 leading-relaxed">
+            We may update these Terms of Use from time to time. Continued use of the Site after changes are posted
+            means you accept the updated terms.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-lg font-bold text-ink-900">Governing Law</h2>
+          <p class="mt-2 leading-relaxed">
+            These terms are governed by the laws of the State of Washington, without regard to conflict-of-law
+            principles.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-lg font-bold text-ink-900">Contact Us</h2>
+          <p class="mt-2 leading-relaxed">
+            Questions about these terms? Contact {business.name} at{' '}
+            <a href={`mailto:${business.email}`} class="text-brand-600 hover:text-brand-700">{business.email}</a>
+            {' '}or {business.phone.display}.
+          </p>
+        </div>
+      </div>
+    </Container>
+  </section>
+</Layout>

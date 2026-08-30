@@ -53,6 +53,7 @@ export const footerNav = {
   ],
   company: [
     { label: 'About Beacon', href: '/about' },
+    { label: 'Careers', href: '/careers' },
     { label: 'Reviews', href: '/reviews' },
     { label: 'Service Areas', href: '/service-areas' },
     { label: 'Financing', href: '/financing' },
@@ -61,5 +62,6 @@ export const footerNav = {
   ],
   legal: [
     { label: 'Privacy Policy', href: '/privacy-policy' },
+    { label: 'Terms of Use', href: '/terms-of-use' },
   ],
 };

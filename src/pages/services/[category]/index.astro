@@ -4,6 +4,7 @@ import SEOHead from '../../../components/SEOHead.astro';
 import PageHero from '../../../components/sections/PageHero.astro';
 import Container from '../../../components/ui/Container.astro';
 import Button from '../../../components/ui/Button.astro';
+import Icon3D from '../../../components/ui/Icon3D.astro';
 import { serviceCategories, getServicesByCategory, type ServiceCategory } from '../../../data/services';
 import { featuredServiceAreas } from '../../../data/locations';
 import { business } from '../../../data/business';
@@ -36,6 +37,7 @@ const categoryServices = getServicesByCategory(category.slug);
     eyebrow="Services"
     title={`${category.name} Services`}
     description={category.description}
+    icon={category.icon}
     breadcrumbs={[
       { name: 'Services', url: '/services' },
       { name: category.name, url: `/services/${category.slug}` },
@@ -50,10 +52,11 @@ const categoryServices = getServicesByCategory(category.slug);
           {categoryServices.map((service) => (
             <a
               href={`/services/${category.slug}/${service.slug}`}
-              class="group flex flex-col gap-1.5 rounded-xl border border-ink-100 bg-ink-50 p-5 transition-colors hover:border-brand-200 hover:bg-brand-50"
+              class="spotlight-card group flex flex-col gap-2 rounded-xl border border-ink-100 bg-ink-50 p-5 transition-colors hover:border-brand-200 hover:bg-brand-50"
             >
-              <h3 class="font-display font-semibold text-ink-900 group-hover:text-brand-700">{service.name}</h3>
-              <p class="text-sm text-ink-500">{service.shortDescription}</p>
+              <Icon3D name={service.icon} class="relative h-14 w-auto shrink-0 transition-transform duration-200 group-hover:scale-110" />
+              <h3 class="relative font-display font-semibold text-ink-900 group-hover:text-brand-700">{service.name}</h3>
+              <p class="relative text-sm text-ink-500">{service.shortDescription}</p>
             </a>
           ))}
         </div>

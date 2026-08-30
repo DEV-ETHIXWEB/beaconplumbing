@@ -1,0 +1,75 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SEOHead from '../components/SEOHead.astro';
+import PageHero from '../components/sections/PageHero.astro';
+import Container from '../components/ui/Container.astro';
+import Button from '../components/ui/Button.astro';
+import { business } from '../data/business';
+
+const qualities = [
+  { title: 'Licensed & Skilled', description: 'Experienced or licensed in plumbing, HVAC, electrical, or septic work.' },
+  { title: 'Customer-Focused', description: 'You treat every home and customer with the same care you’d want for your own.' },
+  { title: 'Reliable', description: 'You show up on time, communicate clearly, and follow through on your work.' },
+  { title: 'Safety-Minded', description: 'You take job-site safety seriously, for yourself and everyone around you.' },
+];
+---
+
+<Layout>
+  <Fragment slot="head">
+    <SEOHead
+      title="Careers | Beacon Plumbing"
+      description="Join the Beacon Plumbing team in Seattle. We're always interested in hearing from licensed, reliable plumbing, HVAC, electrical, and septic professionals."
+      path="/careers"
+    />
+  </Fragment>
+
+  <PageHero
+    eyebrow="Careers"
+    title="Join the Beacon Plumbing Team"
+    description={`${business.name} has served the greater Puget Sound region since ${business.foundingYear}. We're always glad to hear from skilled, reliable people who want to build a career with a family-owned company.`}
+    breadcrumbs={[{ name: 'Careers', url: '/careers' }]}
+  />
+
+  <section class="bg-white py-16 sm:py-20">
+    <Container class="mx-auto max-w-3xl">
+      <div class="rounded-lg border border-gold-500/40 bg-gold-500/10 px-5 py-4 text-sm text-ink-700">
+        TODO: VERIFY — no current openings feed exists yet. Replace this page with real listings when available;
+        until then it points interested applicants to call or email directly.
+      </div>
+
+      <div class="prose-content mt-8 flex flex-col gap-5 text-ink-600">
+        <p class="text-lg leading-relaxed">
+          {business.name} is a family-owned plumbing, heating, electrical, and septic company serving the greater
+          Seattle area. We're proud of the team we've built, and we're always open to hearing from people who share
+          our commitment to honest, dependable service.
+        </p>
+        <p class="leading-relaxed">
+          We don't have specific openings posted right now, but if you're licensed or experienced in plumbing,
+          HVAC, electrical, or septic work and are interested in joining our team, we'd like to hear from you.
+        </p>
+      </div>
+
+      <div class="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2">
+        {qualities.map((quality) => (
+          <div class="flex flex-col gap-1.5 rounded-xl border border-ink-100 bg-ink-50 p-5">
+            <h3 class="font-display font-semibold text-ink-900">{quality.title}</h3>
+            <p class="text-sm text-ink-500">{quality.description}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class="mt-12 flex flex-col items-center gap-4 rounded-2xl bg-brand-950 p-8 text-center text-white sm:p-10">
+        <h2 class="font-display text-2xl font-bold">Interested in joining us?</h2>
+        <p class="max-w-lg text-brand-100">
+          Reach out by phone or email and tell us a bit about your experience.
+        </p>
+        <div class="flex flex-wrap justify-center gap-3">
+          <Button href={business.phone.href} variant="primary" size="lg" icon="phone">Call {business.phone.display}</Button>
+          <Button href={`mailto:${business.email}`} variant="outline" size="lg" class="border-white text-white hover:bg-white/10 hover:text-white">
+            Email Us
+          </Button>
+        </div>
+      </div>
+    </Container>
+  </section>
+</Layout>
