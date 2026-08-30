@@ -18,6 +18,11 @@ export interface KBEntry {
   link?: { label: string; href: string };
 }
 
+// Real, already-published claims (see GuaranteeStrip.astro) — repeated
+// here verbatim, not reworded into a new promise.
+const GUARANTEE_ANSWER =
+  'Beacon Plumbing backs every job with a 90-minute response window, upfront pricing before any work starts, no trip charges, and a 1-year guarantee.';
+
 const coreEntries: KBEntry[] = [
   {
     id: 'phone',
@@ -94,6 +99,11 @@ const coreEntries: KBEntry[] = [
     answer: 'Check the Offers page for current promotions.',
     link: { label: 'View current offers', href: '/offers' },
   },
+  {
+    id: 'guarantee',
+    keywords: ['guarantee', 'warranty', 'response time', 'trip charge', 'upfront pricing'],
+    answer: GUARANTEE_ANSWER,
+  },
 ];
 
 const faqEntries: KBEntry[] = generalFaqs.map((f, i) => ({
@@ -127,6 +137,40 @@ export const knowledgeBase: KBEntry[] = [
   ...serviceEntries,
 ];
 
+// Common shorthand/synonyms expanded before matching, so real phrasing like
+// "do you fix ACs" or "toilet is clogged" still reaches the right existing
+// entry above rather than falling through to the fallback. This only maps
+// TOWARD real content already in the knowledge base — it never introduces
+// a new claim.
+const SYNONYMS: Record<string, string> = {
+  ac: 'air conditioning',
+  'a/c': 'air conditioning',
+  hvac: 'heating',
+  heater: 'water heaters heating',
+  toilet: 'plumbing',
+  clogged: 'drain cleaning',
+  clog: 'drain cleaning',
+  leak: 'leak detection',
+  leaking: 'leak detection',
+  sewage: 'sewer',
+  ev: 'ev charger',
+  cost: 'pricing estimate',
+  price: 'pricing estimate',
+  pricing: 'estimate',
+  open: 'hours emergency',
+  hours: 'emergency 24/7',
+};
+
+function expandQuery(query: string): string {
+  let expanded = query;
+  for (const [shorthand, expansion] of Object.entries(SYNONYMS)) {
+    if (new RegExp(`\\b${shorthand.replace('/', '\\/')}\\b`).test(query)) {
+      expanded += ' ' + expansion;
+    }
+  }
+  return expanded;
+}
+
 const GREETINGS = ['hi', 'hello', 'hey', 'yo', "what's up", 'good morning', 'good afternoon', 'good evening'];
 
 export interface MatchResult {
@@ -145,17 +189,18 @@ export function findAnswer(rawQuery: string): MatchResult {
 
   if (GREETINGS.some((g) => query === g || query.startsWith(g + ' ') || query.startsWith(g + '!'))) {
     return {
-      answer: `Hi! I'm the Beacon Plumbing assistant. Ask me about our services, service areas, financing, or how to reach us.`,
+      answer: `Hi! I'm the Beacon Plumbing assistant. Ask me about our services, service areas, financing, or how to reach us — or use the menu buttons below.`,
     };
   }
 
+  const searchText = expandQuery(query);
   let best: KBEntry | null = null;
   let bestScore = 0;
 
   for (const entry of knowledgeBase) {
     let score = 0;
     for (const keyword of entry.keywords) {
-      if (query.includes(keyword)) {
+      if (searchText.includes(keyword)) {
         // Longer, more specific phrase matches outrank single generic words.
         score += keyword.length;
       }
@@ -174,3 +219,71 @@ export function findAnswer(rawQuery: string): MatchResult {
 
   return FALLBACK;
 }
+
+// --- MCQ menu tree, browsable by tapping instead of typing -----------------
+// Built from the exact same source data as the free-text matcher above, so
+// the two paths (chat vs. menu) never disagree with each other.
+
+export interface MenuLeaf {
+  label: string;
+  answer: string;
+  link?: { label: string; href: string };
+}
+
+export interface MenuBranch {
+  label: string;
+  options: MenuOption[];
+}
+
+export type MenuOption = MenuLeaf | MenuBranch;
+
+export function isMenuBranch(option: MenuOption): option is MenuBranch {
+  return 'options' in option;
+}
+
+export const chatMenu: MenuBranch = {
+  label: 'Main Menu',
+  options: [
+    {
+      label: 'Our Services',
+      options: serviceCategories.map((c) => ({
+        label: c.name,
+        answer: c.description,
+        link: { label: `${c.name} services`, href: `/services/${c.slug}` },
+      })),
+    },
+    {
+      label: 'Service Areas',
+      answer: `Beacon Plumbing serves ${regions.join(', ')} — ${serviceAreas.length}+ cities across the Puget Sound region.`,
+      link: { label: 'View all service areas', href: '/service-areas' },
+    },
+    {
+      label: 'Emergency Service',
+      answer: `Yes — ${business.hours.emergency}. Call ${business.phone.display} any time.`,
+      link: { label: 'Emergency Plumbing', href: '/emergency-plumbing' },
+    },
+    {
+      label: 'Financing',
+      answer: `Financing is available through ${business.financing.partner} for larger jobs.`,
+      link: { label: 'Learn about financing', href: '/financing' },
+    },
+    {
+      label: 'Our Guarantee',
+      answer: GUARANTEE_ANSWER,
+    },
+    {
+      label: 'Common Questions',
+      options: generalFaqs.map((f) => ({ label: f.question, answer: f.answer })),
+    },
+    {
+      label: 'Book a Service',
+      answer: 'Request service online with a quick form and our team will follow up to schedule.',
+      link: { label: 'Request Service', href: '/contact' },
+    },
+    {
+      label: 'Contact Info',
+      answer: `Call ${business.phone.display}, or visit us at ${business.address.street}, ${business.address.city}, ${business.address.state} ${business.address.zip}.`,
+      link: { label: 'Get directions', href: business.address.directionsUrl },
+    },
+  ],
+};

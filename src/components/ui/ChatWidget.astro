@@ -4,11 +4,9 @@
 // used elsewhere on the site — no LLM, no API key, no network call, so it
 // works fully offline in the browser and never invents information.
 import { business } from '../../data/business';
-
-const quickReplies = ['Service areas', 'Emergency service', 'Financing', 'Book service'];
 ---
 
-<div id="chat-widget" class="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-4 z-40 md:bottom-4">
+<div id="chat-widget" class="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-4 z-[60] md:bottom-4">
   <button
     type="button"
     id="chat-toggle"
@@ -31,19 +29,29 @@ const quickReplies = ['Service areas', 'Emergency service', 'Financing', 'Book s
     role="dialog"
     aria-label="Beacon Plumbing assistant"
     hidden
-    class="absolute bottom-[4.5rem] right-0 flex h-[28rem] w-80 max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-xl border border-ink-100 bg-white shadow-2xl"
+    class="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-white sm:absolute sm:inset-auto sm:bottom-[4.5rem] sm:right-0 sm:z-auto sm:h-[28rem] sm:w-80 sm:max-w-[calc(100vw-2rem)] sm:rounded-xl sm:border sm:border-ink-100 sm:shadow-2xl"
   >
-    <div class="flex items-center gap-3 bg-brand-600 px-4 py-3 text-white">
+    <div class="flex items-center gap-3 bg-brand-600 px-4 py-3 text-white [padding-top:max(0.75rem,env(safe-area-inset-top))] sm:[padding-top:0.75rem]">
       <span class="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-900 ring-2 ring-brand-300">
         <svg viewBox="0 0 24 24" class="h-4.5 w-4.5" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
           <path d="M4 5.5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H10.5l-4.3 3.4a.6.6 0 0 1-.97-.47V17.5H4a1 1 0 0 1-1-1v-10a1 1 0 0 1 1-1z" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
         <span class="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-500" aria-hidden="true"></span>
       </span>
-      <div>
+      <div class="flex-1">
         <p class="font-display text-sm font-bold">Beacon Assistant</p>
         <p class="text-xs text-brand-100">Answers about our services &amp; areas</p>
       </div>
+      <button
+        type="button"
+        id="chat-close"
+        aria-label="Close chat"
+        class="rounded-md p-1.5 hover:bg-white/10 sm:hidden"
+      >
+        <svg viewBox="0 0 20 20" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M5 5l10 10M15 5L5 15" stroke-linecap="round" />
+        </svg>
+      </button>
     </div>
 
     <div id="chat-messages" class="flex-1 space-y-3 overflow-y-auto px-4 py-3">
@@ -52,17 +60,6 @@ const quickReplies = ['Service areas', 'Emergency service', 'Financing', 'Book s
           Hi! I'm the Beacon Plumbing assistant. Ask me about our services, service areas, financing, or how to
           reach us.
         </div>
-      </div>
-      <div id="chat-quick-replies" class="flex flex-wrap gap-2">
-        {quickReplies.map((q) => (
-          <button
-            type="button"
-            data-quick-reply={q}
-            class="rounded-full border border-ink-200 px-3 py-1.5 text-xs font-medium text-ink-700 hover:border-brand-300 hover:bg-brand-50"
-          >
-            {q}
-          </button>
-        ))}
       </div>
     </div>
 
@@ -94,22 +91,28 @@ const quickReplies = ['Service areas', 'Emergency service', 'Financing', 'Book s
 </div>
 
 <script>
-  import { findAnswer } from '../../data/chatbot-knowledge';
+  import { findAnswer, chatMenu, isMenuBranch, type MenuOption } from '../../data/chatbot-knowledge';
 
   const widget = document.getElementById('chat-widget');
   const toggleBtn = document.getElementById('chat-toggle');
+  const closeBtn = document.getElementById('chat-close');
   const panel = document.getElementById('chat-panel');
   const messages = document.getElementById('chat-messages');
   const form = document.getElementById('chat-form') as HTMLFormElement | null;
   const input = document.getElementById('chat-input') as HTMLInputElement | null;
   const chatIcon = toggleBtn?.querySelector('[data-icon="chat"]');
   const closeIcon = toggleBtn?.querySelector('[data-icon="close"]');
+  const isMobile = () => window.matchMedia('(max-width: 639px)').matches;
 
   function setOpen(open: boolean) {
     toggleBtn?.setAttribute('aria-expanded', String(open));
     panel?.toggleAttribute('hidden', !open);
     chatIcon?.classList.toggle('hidden', open);
     closeIcon?.classList.toggle('hidden', !open);
+    // The panel goes fully fixed-fullscreen on mobile (see the sm: classes
+    // on #chat-panel), so lock background scroll while it's covering the
+    // viewport — otherwise the page behind it can still scroll.
+    document.body.classList.toggle('overflow-hidden', open && isMobile());
     if (open) input?.focus();
   }
 
@@ -117,11 +120,13 @@ const quickReplies = ['Service areas', 'Emergency service', 'Financing', 'Book s
     setOpen(toggleBtn.getAttribute('aria-expanded') !== 'true');
   });
 
+  closeBtn?.addEventListener('click', () => setOpen(false));
+
   document.addEventListener('click', (e) => {
     // composedPath() reflects the DOM at dispatch time — unlike
     // widget.contains(e.target), it stays correct even when a handler for
-    // this same click (e.g. the quick-reply buttons below) removes the
-    // clicked element from the DOM before this listener runs.
+    // this same click (e.g. the menu buttons below) removes the clicked
+    // element from the DOM before this listener runs.
     if (widget && !e.composedPath().includes(widget)) setOpen(false);
   });
 
@@ -154,15 +159,61 @@ const quickReplies = ['Service areas', 'Emergency service', 'Financing', 'Book s
     messages.scrollTop = messages.scrollHeight;
   }
 
+  // Renders one row of MCQ-style option chips. Clicking an option logs it
+  // as a "user" bubble, then either drills into a submenu or shows the
+  // leaf's answer — after which the main menu is offered again, so users
+  // can keep tapping through topics without ever needing to type.
+  function renderOptions(options: MenuOption[], showBackToMenu: boolean) {
+    if (!messages) return;
+    const row = document.createElement('div');
+    row.className = 'flex flex-wrap gap-2';
+
+    const makeChip = (label: string, dashed: boolean, onClick: () => void) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = label;
+      btn.className = dashed
+        ? 'rounded-full border border-dashed border-ink-300 px-3 py-1.5 text-xs font-medium text-ink-500 hover:border-brand-300 hover:text-brand-700'
+        : 'rounded-full border border-ink-200 px-3 py-1.5 text-xs font-medium text-ink-700 hover:border-brand-300 hover:bg-brand-50';
+      btn.addEventListener('click', onClick);
+      row.appendChild(btn);
+    };
+
+    for (const option of options) {
+      makeChip(option.label, false, () => selectOption(option, row));
+    }
+    if (showBackToMenu) {
+      makeChip('↺ Main Menu', true, () => selectOption(chatMenu, row));
+    }
+
+    messages.appendChild(row);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function selectOption(option: MenuOption, sourceRow: HTMLElement) {
+    sourceRow.remove();
+    addMessage(option.label, 'user');
+    window.setTimeout(() => {
+      if (isMenuBranch(option)) {
+        renderOptions(option.options, option !== chatMenu);
+      } else {
+        addMessage(option.answer, 'bot', option.link);
+        renderOptions(chatMenu.options, false);
+      }
+    }, 250);
+  }
+
   function ask(text: string) {
     const trimmed = text.trim();
     if (!trimmed) return;
     addMessage(trimmed, 'user');
-    document.getElementById('chat-quick-replies')?.remove();
     const result = findAnswer(trimmed);
     // Tiny delay so the bot reply doesn't render in the exact same tick as
     // the user's message — reads more like a real reply, not an echo.
-    window.setTimeout(() => addMessage(result.answer, 'bot', result.link), 250);
+    window.setTimeout(() => {
+      addMessage(result.answer, 'bot', result.link);
+      renderOptions(chatMenu.options, false);
+    }, 250);
   }
 
   form?.addEventListener('submit', (e) => {
@@ -172,7 +223,7 @@ const quickReplies = ['Service areas', 'Emergency service', 'Financing', 'Book s
     input.value = '';
   });
 
-  document.querySelectorAll<HTMLButtonElement>('[data-quick-reply]').forEach((btn) => {
-    btn.addEventListener('click', () => ask(btn.dataset.quickReply || ''));
-  });
+  // Seed the conversation with the main menu so both typing and tapping
+  // are available from the very first render, not just after a reply.
+  renderOptions(chatMenu.options, false);
 </script>
