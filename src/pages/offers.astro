@@ -1,0 +1,52 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SEOHead from '../components/SEOHead.astro';
+import PageHero from '../components/sections/PageHero.astro';
+import Container from '../components/ui/Container.astro';
+import Button from '../components/ui/Button.astro';
+import { offers } from '../data/offers';
+import { business } from '../data/business';
+---
+
+<Layout>
+  <Fragment slot="head">
+    <SEOHead
+      title="Coupons & Offers | Beacon Plumbing Seattle"
+      description="Current plumbing, heating, and electrical coupons and special offers from Beacon Plumbing in the greater Seattle area."
+      path="/offers"
+    />
+  </Fragment>
+
+  <PageHero
+    eyebrow="Offers"
+    title="Current Coupons & Special Offers"
+    description="Call ahead and mention the offer you're interested in — our team will confirm current eligibility and terms."
+    breadcrumbs={[{ name: 'Offers', url: '/offers' }]}
+  />
+
+  <section class="bg-white py-16 sm:py-20">
+    <Container>
+      <div class="mb-8 rounded-lg border border-gold-500/40 bg-gold-500/10 px-5 py-4 text-sm text-ink-700">
+        Offer terms and current availability are confirmed by phone at the time of service. Call{' '}
+        <a href={business.phone.href} class="font-semibold text-brand-600 hover:text-brand-700">{business.phone.display}</a>{' '}
+        for details on any offer below.
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {offers.map((offer) => (
+          <div class="rounded-xl border border-ink-100 bg-ink-50 p-5">
+            <h3 class="font-display font-semibold text-ink-900">{offer.title}</h3>
+            <p class="mt-1 text-sm text-ink-500">{offer.detail}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class="mt-12 flex flex-col items-center gap-4 rounded-2xl bg-brand-950 p-8 text-center text-white sm:p-10">
+        <h2 class="font-display text-2xl font-bold">Ready to book?</h2>
+        <Button href={business.phone.href} variant="primary" size="lg" icon="phone">
+          Call {business.phone.display}
+        </Button>
+      </div>
+    </Container>
+  </section>
+</Layout>

@@ -1,0 +1,68 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../../assets/brand/logo.webp';
+import { business } from '../../data/business';
+import { mainNav } from '../../data/navigation';
+import Container from '../ui/Container.astro';
+import Button from '../ui/Button.astro';
+import MobileNav from './MobileNav';
+---
+
+<header class="sticky top-0 z-50 border-b border-ink-100 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/80">
+  <div class="hidden bg-brand-900 text-white lg:block">
+    <Container class="flex items-center justify-between py-1.5 text-xs">
+      <p class="font-medium tracking-wide">
+        24/7 Emergency Service &middot; Licensed, Bonded &amp; Insured &middot; Serving Puget Sound Since {business.foundingYear}
+      </p>
+      <a href={business.phone.href} class="font-semibold text-gold-500 hover:text-gold-400">
+        {business.phone.display}
+      </a>
+    </Container>
+  </div>
+
+  <Container class="flex min-w-0 items-center justify-between gap-2 py-3 lg:gap-4">
+    <a href="/" class="flex shrink-0 items-center" aria-label={`${business.name} home`}>
+      <Image src={logo} alt={business.name} height={44} width={168} class="h-9 w-auto sm:h-11" />
+    </a>
+
+    <nav class="hidden min-w-0 items-center gap-0.5 lg:flex xl:gap-1" aria-label="Primary">
+      {mainNav.map((item) => (
+        <div class="group relative">
+          <a
+            href={item.href}
+            class="flex items-center gap-1 whitespace-nowrap rounded-md px-2 py-2 text-sm font-semibold text-ink-700 transition-colors hover:bg-brand-50 hover:text-brand-600 xl:px-3"
+          >
+            {item.label}
+            {item.children && (
+              <svg viewBox="0 0 20 20" class="h-3.5 w-3.5 text-ink-400" fill="currentColor" aria-hidden="true">
+                <path d="M5.5 7.5l4.5 4.5 4.5-4.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            )}
+          </a>
+          {item.children && (
+            <div class="invisible absolute left-0 top-full z-20 w-64 translate-y-1 rounded-lg border border-ink-100 bg-white p-2 opacity-0 shadow-lg transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+              {item.children.map((child) => (
+                <a
+                  href={child.href}
+                  class="block rounded-md px-3 py-2 text-sm font-medium text-ink-600 transition-colors hover:bg-brand-50 hover:text-brand-600"
+                >
+                  {child.label}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <Button href={business.phone.href} variant="primary" icon="phone" class="max-sm:hidden lg:hidden xl:!inline-flex">
+        Call Now
+      </Button>
+      <Button href="/contact" variant="outline" class="max-xl:hidden">
+        Request Service
+      </Button>
+      <MobileNav client:load business={business} mainNav={mainNav} />
+    </div>
+  </Container>
+</header>

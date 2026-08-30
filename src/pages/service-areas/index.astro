@@ -1,0 +1,45 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import SEOHead from '../../components/SEOHead.astro';
+import PageHero from '../../components/sections/PageHero.astro';
+import Container from '../../components/ui/Container.astro';
+import { serviceAreas, regions } from '../../data/locations';
+---
+
+<Layout>
+  <Fragment slot="head">
+    <SEOHead
+      title="Service Areas | Beacon Plumbing — Serving the Greater Seattle Area"
+      description="Beacon Plumbing provides licensed plumbing, heating, electrical, and septic service across the greater Seattle area, including the Eastside, South King & Pierce County, Snohomish County, and Kitsap Peninsula."
+      path="/service-areas"
+    />
+  </Fragment>
+
+  <PageHero
+    eyebrow="Service Areas"
+    title="Serving the Greater Puget Sound Region"
+    description={`Beacon Plumbing dispatches licensed technicians to ${serviceAreas.length}+ communities across the Seattle metro area.`}
+    breadcrumbs={[{ name: 'Service Areas', url: '/service-areas' }]}
+  />
+
+  <section class="bg-white py-16 sm:py-20">
+    <Container class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-5">
+      {regions.map((region) => (
+        <div>
+          <h2 class="mb-4 font-display text-sm font-bold uppercase tracking-widest text-brand-600">{region}</h2>
+          <ul class="flex flex-col gap-2.5">
+            {serviceAreas
+              .filter((a) => a.region === region)
+              .map((area) => (
+                <li>
+                  <a href={`/service-areas/${area.slug}`} class="text-sm text-ink-600 hover:text-brand-600 hover:underline">
+                    {area.name}
+                  </a>
+                </li>
+              ))}
+          </ul>
+        </div>
+      ))}
+    </Container>
+  </section>
+</Layout>

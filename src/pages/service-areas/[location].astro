@@ -1,0 +1,145 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import SEOHead from '../../components/SEOHead.astro';
+import PageHero from '../../components/sections/PageHero.astro';
+import Container from '../../components/ui/Container.astro';
+import Button from '../../components/ui/Button.astro';
+import { serviceAreas, type ServiceArea } from '../../data/locations';
+import { serviceCategories } from '../../data/services';
+import { business } from '../../data/business';
+import { siteUrl } from '../../data/site';
+import { localBusinessSchema } from '../../lib/seo';
+
+export function getStaticPaths() {
+  return serviceAreas.map((area) => ({
+    params: { location: area.slug },
+    props: { area },
+  }));
+}
+
+interface Props {
+  area: ServiceArea;
+}
+
+const { area } = Astro.props;
+
+const nearbyAreas = serviceAreas
+  .filter((a) => a.region === area.region && a.slug !== area.slug)
+  .slice(0, 6);
+
+const schema = localBusinessSchema({
+  siteUrl,
+  name: business.name,
+  legalName: business.legalName,
+  telephone: business.phone.display,
+  email: business.email,
+  address: business.address,
+  geo: { lat: business.address.lat, lng: business.address.lng },
+  areaServed: [area.name],
+  sameAs: Object.values(business.social),
+  logoUrl: `${siteUrl}/favicon.webp`,
+});
+---
+
+<Layout>
+  <Fragment slot="head">
+    <SEOHead
+      title={`Plumber in ${area.name}, WA | 24/7 Emergency Service | Beacon Plumbing`}
+      description={`Beacon Plumbing provides licensed plumbing, heating, electrical, and septic service in ${area.name}, WA. 24/7 emergency response available. Call ${business.phone.display}.`}
+      path={`/service-areas/${area.slug}`}
+      jsonLd={schema}
+    />
+  </Fragment>
+
+  <PageHero
+    eyebrow={area.region}
+    title={`Plumbing & Home Services in ${area.name}, WA`}
+    description={`Licensed plumbing, heating, electrical, and septic service for ${area.name} homeowners and businesses — available 24/7 for emergencies.`}
+    breadcrumbs={[
+      { name: 'Service Areas', url: '/service-areas' },
+      { name: area.name, url: `/service-areas/${area.slug}` },
+    ]}
+  />
+
+  <section class="bg-white py-16 sm:py-20">
+    <Container class="grid grid-cols-1 gap-12 lg:grid-cols-[1.3fr_1fr]">
+      <div class="flex flex-col gap-6">
+        <div class="prose-content flex flex-col gap-4 text-ink-600">
+          <p class="text-lg leading-relaxed">
+            Beacon Plumbing has served the greater Seattle area since {business.foundingYear}, and {area.name} is
+            part of our regular service coverage in {area.region}. Our licensed technicians handle everything from
+            routine repairs to full-scale installations for plumbing, heating, electrical, and septic systems.
+          </p>
+          <p class="leading-relaxed">
+            Whether you're dealing with a slow drain, a failing water heater, an electrical issue, or a
+            middle-of-the-night emergency, Beacon Plumbing is licensed, bonded, and insured (WA Contractors License
+            #{business.license.number}) and available 24/7 to help {area.name} residents.
+          </p>
+        </div>
+
+        <div class="rounded-xl border border-accent-200 bg-accent-50 p-5">
+          <h2 class="font-display font-semibold text-accent-700">24/7 Emergency Service in {area.name}</h2>
+          <p class="mt-1 text-sm text-accent-700/80">
+            Burst pipes, sewer backups, and no-heat situations can't wait. Call now for emergency dispatch.
+          </p>
+          <Button href={business.phone.href} variant="primary" size="md" icon="phone" class="mt-3">
+            Call {business.phone.display}
+          </Button>
+        </div>
+
+        <div>
+          <h2 class="mb-4 font-display text-xl font-bold text-ink-900">Services Available in {area.name}</h2>
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {serviceCategories.map((category) => (
+              <a
+                href={`/services/${category.slug}`}
+                class="group flex items-center justify-between rounded-lg border border-ink-100 bg-ink-50 px-4 py-3 text-sm font-medium text-ink-700 transition-colors hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700"
+              >
+                {category.name}
+                <svg viewBox="0 0 20 20" class="h-4 w-4 text-ink-400 transition-transform group-hover:translate-x-0.5 group-hover:text-brand-500" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M4 10h12M11 5l5 5-5 5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <aside class="flex flex-col gap-6">
+        <div class="rounded-xl border border-ink-100 bg-ink-50 p-6">
+          <h2 class="font-display font-semibold text-ink-900">Contact Beacon Plumbing</h2>
+          <dl class="mt-4 flex flex-col gap-3 text-sm">
+            <div>
+              <dt class="font-medium text-ink-500">Phone</dt>
+              <dd><a href={business.phone.href} class="text-brand-600 hover:text-brand-700">{business.phone.display}</a></dd>
+            </div>
+            <div>
+              <dt class="font-medium text-ink-500">Office</dt>
+              <dd class="text-ink-700">{business.address.street}, {business.address.city}, {business.address.state} {business.address.zip}</dd>
+            </div>
+            <div>
+              <dt class="font-medium text-ink-500">Availability</dt>
+              <dd class="text-ink-700">{business.hours.emergency}</dd>
+            </div>
+          </dl>
+          <Button href="/contact" variant="secondary" size="md" class="mt-5 w-full">Request Service</Button>
+        </div>
+
+        {nearbyAreas.length > 0 && (
+          <div class="rounded-xl border border-ink-100 p-6">
+            <h2 class="font-display font-semibold text-ink-900">Nearby Areas We Serve</h2>
+            <ul class="mt-4 flex flex-col gap-2">
+              {nearbyAreas.map((nearby) => (
+                <li>
+                  <a href={`/service-areas/${nearby.slug}`} class="text-sm text-ink-600 hover:text-brand-600 hover:underline">
+                    {nearby.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </aside>
+    </Container>
+  </section>
+</Layout>

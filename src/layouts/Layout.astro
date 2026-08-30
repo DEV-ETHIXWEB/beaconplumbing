@@ -1,0 +1,36 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/plus-jakarta-sans';
+import '../styles/global.css';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import MobileActionBar from '../components/layout/MobileActionBar.astro';
+
+interface Props {
+  /** SEOHead and any other <head> content, passed via the "head" slot */
+}
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.webp" type="image/webp" />
+    <meta name="generator" content={Astro.generator} />
+    <slot name="head" />
+  </head>
+  <body class="flex min-h-screen flex-col pb-16 md:pb-0">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-brand-500 focus:px-4 focus:py-2 focus:text-white"
+    >
+      Skip to main content
+    </a>
+    <Header />
+    <main id="main-content" class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+    <MobileActionBar />
+  </body>
+</html>

@@ -1,0 +1,72 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SEOHead from '../components/SEOHead.astro';
+import PageHero from '../components/sections/PageHero.astro';
+import Container from '../components/ui/Container.astro';
+import ContactForm from '../components/forms/ContactForm';
+import { business } from '../data/business';
+---
+
+<Layout>
+  <Fragment slot="head">
+    <SEOHead
+      title="Contact Beacon Plumbing | Request Service in Seattle, WA"
+      description="Contact Beacon Plumbing for plumbing, heating, electrical, and septic service across the greater Seattle area. Call (206) 800-6269 or request service online."
+      path="/contact"
+    />
+  </Fragment>
+
+  <PageHero
+    eyebrow="Get in Touch"
+    title="Contact Beacon Plumbing"
+    description="Call us directly for the fastest response, or send us a request and we'll follow up shortly."
+    breadcrumbs={[{ name: 'Contact', url: '/contact' }]}
+  />
+
+  <section class="bg-white py-16 sm:py-20">
+    <Container class="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.2fr]">
+      <div class="flex flex-col gap-8">
+        <div>
+          <h2 class="font-display text-xl font-bold text-ink-900">Call Us</h2>
+          <a href={business.phone.href} class="mt-2 inline-block font-display text-3xl font-extrabold text-brand-600 hover:text-brand-700">
+            {business.phone.display}
+          </a>
+          <p class="mt-1 text-sm text-ink-500">24/7 emergency dispatch available.</p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-xl font-bold text-ink-900">Email</h2>
+          <a href={`mailto:${business.email}`} class="mt-2 inline-block text-brand-600 hover:text-brand-700">
+            {business.email}
+          </a>
+        </div>
+
+        <div>
+          <h2 class="font-display text-xl font-bold text-ink-900">Office</h2>
+          <a
+            href={business.address.directionsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mt-2 block text-ink-600 hover:text-brand-600"
+          >
+            {business.address.street}<br />
+            {business.address.city}, {business.address.state} {business.address.zip}
+          </a>
+          <p class="mt-1 text-sm text-ink-400">Get directions &rarr;</p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-xl font-bold text-ink-900">License</h2>
+          <p class="mt-2 text-sm text-ink-600">
+            {business.license.label} #{business.license.number}
+          </p>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-ink-100 bg-ink-50 p-6 shadow-sm sm:p-8">
+        <h2 class="mb-6 font-display text-xl font-bold text-ink-900">Request Service</h2>
+        <ContactForm client:load />
+      </div>
+    </Container>
+  </section>
+</Layout>

@@ -1,0 +1,150 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import SEOHead from '../../../components/SEOHead.astro';
+import PageHero from '../../../components/sections/PageHero.astro';
+import Container from '../../../components/ui/Container.astro';
+import Button from '../../../components/ui/Button.astro';
+import FAQAccordion from '../../../components/sections/FAQAccordion';
+import { services, serviceCategories, getServicesByCategory, type Service } from '../../../data/services';
+import { featuredServiceAreas } from '../../../data/locations';
+import { business } from '../../../data/business';
+import { siteUrl } from '../../../data/site';
+import { serviceSchema } from '../../../lib/seo';
+
+export function getStaticPaths() {
+  return services.map((service) => ({
+    params: { category: service.category, service: service.slug },
+    props: { service },
+  }));
+}
+
+interface Props {
+  service: Service;
+}
+
+const { service } = Astro.props;
+const category = serviceCategories.find((c) => c.slug === service.category)!;
+const relatedServices = getServicesByCategory(service.category)
+  .filter((s) => s.slug !== service.slug)
+  .slice(0, 4);
+
+const faqs = [
+  {
+    question: `Does Beacon Plumbing offer ${service.name.toLowerCase()} on an emergency basis?`,
+    answer: `Beacon Plumbing provides 24/7 emergency response. If your ${service.name.toLowerCase()} issue can't wait, call us directly and we'll help right away.`,
+  },
+  {
+    question: `Is Beacon Plumbing licensed for ${service.name.toLowerCase()}?`,
+    answer: `Yes. Beacon Plumbing is licensed, bonded, and insured under Washington Contractors License #${business.license.number}.`,
+  },
+  {
+    question: `What areas does Beacon Plumbing offer ${service.name.toLowerCase()} in?`,
+    answer: `We serve the greater Puget Sound region, including Seattle, the Eastside, South King & Pierce County, Snohomish County, and the Kitsap Peninsula. Visit our Service Areas page for the full list.`,
+  },
+];
+
+const schema = serviceSchema({
+  serviceName: service.name,
+  description: service.shortDescription,
+  providerName: business.name,
+  providerUrl: siteUrl,
+  url: `${siteUrl}/services/${service.category}/${service.slug}`,
+});
+---
+
+<Layout>
+  <Fragment slot="head">
+    <SEOHead
+      title={`${service.name} in Seattle, WA | Beacon Plumbing`}
+      description={`${service.shortDescription} Licensed, bonded, and available 24/7 across the greater Seattle area. Call ${business.phone.display}.`}
+      path={`/services/${service.category}/${service.slug}`}
+      jsonLd={schema}
+    />
+  </Fragment>
+
+  <PageHero
+    eyebrow={category.name}
+    title={service.name}
+    description={service.shortDescription}
+    breadcrumbs={[
+      { name: 'Services', url: '/services' },
+      { name: category.name, url: `/services/${category.slug}` },
+      { name: service.name, url: `/services/${service.category}/${service.slug}` },
+    ]}
+  />
+
+  <section class="bg-white py-16 sm:py-20">
+    <Container class="grid grid-cols-1 gap-12 lg:grid-cols-[1.2fr_1fr]">
+      <div class="flex flex-col gap-10">
+        <div class="prose-content flex flex-col gap-4 text-ink-600">
+          <p class="text-lg leading-relaxed">
+            Beacon Plumbing provides professional {service.name.toLowerCase()} service across the greater Seattle
+            area. Our licensed technicians diagnose the issue accurately and get it fixed right the first time —
+            with upfront communication throughout the job.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-xl font-bold text-ink-900">Why Choose Beacon</h2>
+          <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {business.trustBadges.map((badge) => (
+              <div class="flex items-center gap-2.5 rounded-lg border border-ink-100 bg-ink-50 px-4 py-3 text-sm font-medium text-ink-700">
+                <svg viewBox="0 0 20 20" class="h-4 w-4 shrink-0 text-brand-500" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0L3.3 9.7a1 1 0 1 1 1.4-1.4L8 11.6l6.8-6.8a1 1 0 0 1 1.4 0z" clip-rule="evenodd" />
+                </svg>
+                {badge.label}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {relatedServices.length > 0 && (
+          <div>
+            <h2 class="font-display text-xl font-bold text-ink-900">Related {category.name} Services</h2>
+            <div class="mt-4 flex flex-wrap gap-2.5">
+              {relatedServices.map((related) => (
+                <a
+                  href={`/services/${related.category}/${related.slug}`}
+                  class="rounded-full border border-ink-200 px-4 py-2 text-sm font-medium text-ink-700 hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700"
+                >
+                  {related.name}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div>
+          <h2 class="mb-4 font-display text-xl font-bold text-ink-900">Frequently Asked Questions</h2>
+          <FAQAccordion client:visible items={faqs} />
+        </div>
+      </div>
+
+      <aside class="flex flex-col gap-6">
+        <div class="rounded-xl border border-accent-200 bg-accent-50 p-6">
+          <h2 class="font-display font-semibold text-accent-700">Need {service.name}?</h2>
+          <p class="mt-1 text-sm text-accent-700/80">Call now for fast, reliable service.</p>
+          <Button href={business.phone.href} variant="primary" size="md" icon="phone" class="mt-4 w-full">
+            Call {business.phone.display}
+          </Button>
+          <Button href="/contact" variant="outline" size="md" class="mt-2.5 w-full">
+            Request Service Online
+          </Button>
+        </div>
+
+        <div class="rounded-xl border border-ink-100 p-6">
+          <h2 class="font-display font-semibold text-ink-900">Popular Service Areas</h2>
+          <ul class="mt-4 grid grid-cols-2 gap-2">
+            {featuredServiceAreas.map((area) => (
+              <li>
+                <a href={`/service-areas/${area.slug}`} class="text-sm text-ink-600 hover:text-brand-600 hover:underline">
+                  {area.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </aside>
+    </Container>
+  </section>
+</Layout>

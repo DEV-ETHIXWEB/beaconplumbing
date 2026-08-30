@@ -1,0 +1,32 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SEOHead from '../components/SEOHead.astro';
+import PageHero from '../components/sections/PageHero.astro';
+import Container from '../components/ui/Container.astro';
+import { business } from '../data/business';
+---
+
+<Layout>
+  <Fragment slot="head">
+    <SEOHead
+      title="Privacy Policy | Beacon Plumbing"
+      description="Beacon Plumbing's privacy policy."
+      path="/privacy-policy"
+    />
+  </Fragment>
+
+  <PageHero title="Privacy Policy" breadcrumbs={[{ name: 'Privacy Policy', url: '/privacy-policy' }]} />
+
+  <section class="bg-white py-16 sm:py-20">
+    <Container class="mx-auto max-w-3xl">
+      <div class="rounded-lg border border-gold-500/40 bg-gold-500/10 px-5 py-4 text-sm text-ink-700">
+        TODO: VERIFY — the full legacy privacy policy text was not extracted during the Phase 0 audit.
+        Replace this placeholder with Beacon's current, reviewed privacy policy before launch.
+      </div>
+      <p class="mt-6 text-ink-600">
+        For questions about this policy, contact {business.name} at{' '}
+        <a href={`mailto:${business.email}`} class="text-brand-600 hover:text-brand-700">{business.email}</a>.
+      </p>
+    </Container>
+  </section>
+</Layout>

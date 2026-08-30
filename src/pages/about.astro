@@ -1,0 +1,67 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SEOHead from '../components/SEOHead.astro';
+import PageHero from '../components/sections/PageHero.astro';
+import Container from '../components/ui/Container.astro';
+import Button from '../components/ui/Button.astro';
+import { business } from '../data/business';
+---
+
+<Layout>
+  <Fragment slot="head">
+    <SEOHead
+      title="About Beacon Plumbing | Seattle's Trusted Plumber Since 1999"
+      description="Beacon Plumbing has served the greater Seattle area since 1999. Learn about our licensed, family-owned plumbing, heating, electrical & septic company."
+      path="/about"
+    />
+  </Fragment>
+
+  <PageHero
+    eyebrow="About Us"
+    title="Seattle's Trusted Plumbing, Heating & Electrical Team"
+    description={`${business.name} has served the greater Puget Sound region since ${business.foundingYear}.`}
+    breadcrumbs={[{ name: 'About', url: '/about' }]}
+  />
+
+  <section class="bg-white py-16 sm:py-20">
+    <Container class="mx-auto max-w-3xl">
+      <div class="prose-content flex flex-col gap-5 text-ink-600">
+        <p class="text-lg leading-relaxed">
+          {business.legalName} was founded in {business.foundingYear} by {business.founder}, with a simple goal:
+          bring honest, dependable plumbing service to homeowners and businesses across the greater Seattle area.
+          Over {new Date().getFullYear() - business.foundingYear}+ years, that mission has grown into a full-service
+          team covering plumbing, sewer &amp; drain, heating &amp; HVAC, air conditioning, electrical, and septic
+          service &mdash; all under one roof.
+        </p>
+        <p class="leading-relaxed">
+          Beacon Plumbing is licensed, bonded, and insured under Washington Contractors License #{business.license.number},
+          and remains a family-owned and operated company. We proudly offer discounts for active-duty and veteran
+          military members, and our technicians are available 24/7 for emergency service across Puget Sound.
+        </p>
+        <p class="leading-relaxed">
+          {business.tagline}
+        </p>
+      </div>
+
+      <div class="mt-10 grid grid-cols-2 gap-5 sm:grid-cols-4">
+        {business.trustBadges.map((badge) => (
+          <div class="flex flex-col items-center gap-2 rounded-xl border border-ink-100 bg-ink-50 p-5 text-center">
+            <svg viewBox="0 0 20 20" class="h-6 w-6 text-brand-500" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0L3.3 9.7a1 1 0 1 1 1.4-1.4L8 11.6l6.8-6.8a1 1 0 0 1 1.4 0z" clip-rule="evenodd" />
+            </svg>
+            <span class="text-sm font-semibold text-ink-800">{badge.label}</span>
+          </div>
+        ))}
+      </div>
+
+      <div class="mt-12 flex flex-col items-center gap-4 rounded-2xl bg-brand-950 p-8 text-center text-white sm:p-10">
+        <h2 class="font-display text-2xl font-bold">Ready to get started?</h2>
+        <p class="max-w-lg text-brand-100">Reach the Beacon team 24/7 for emergency service or to schedule a visit.</p>
+        <div class="flex flex-wrap justify-center gap-3">
+          <Button href={business.phone.href} variant="primary" size="lg" icon="phone">Call {business.phone.display}</Button>
+          <Button href="/contact" variant="outline" size="lg" class="border-white text-white hover:bg-white/10 hover:text-white">Contact Us</Button>
+        </div>
+      </div>
+    </Container>
+  </section>
+</Layout>

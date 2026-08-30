@@ -1,0 +1,52 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SEOHead from '../components/SEOHead.astro';
+import { business } from '../data/business';
+import { siteUrl } from '../data/site';
+import { localBusinessSchema } from '../lib/seo';
+import logoUrl from '../assets/brand/logo.webp';
+
+import Hero from '../components/sections/Hero.astro';
+import CoreServices from '../components/sections/CoreServices.astro';
+import EmergencyBand from '../components/sections/EmergencyBand.astro';
+import WhyBeacon from '../components/sections/WhyBeacon.astro';
+import ServiceAreasPreview from '../components/sections/ServiceAreasPreview.astro';
+import Financing from '../components/sections/Financing.astro';
+import Reviews from '../components/sections/Reviews.astro';
+import FAQSection from '../components/sections/FAQSection.astro';
+import FinalCTA from '../components/sections/FinalCTA.astro';
+
+const schema = localBusinessSchema({
+  siteUrl,
+  name: business.name,
+  legalName: business.legalName,
+  telephone: business.phone.display,
+  email: business.email,
+  address: business.address,
+  geo: { lat: business.address.lat, lng: business.address.lng },
+  areaServed: ['Seattle', 'Bellevue', 'Kent', 'Everett', 'Tacoma', 'Bremerton'],
+  sameAs: Object.values(business.social),
+  logoUrl: `${siteUrl}${logoUrl.src}`,
+});
+---
+
+<Layout>
+  <Fragment slot="head">
+    <SEOHead
+      title="Beacon Plumbing | Seattle Plumber, Electrician & HVAC — 24/7 Emergency Service"
+      description="Beacon Plumbing has served the greater Seattle area since 1999. Licensed plumbing, heating, electrical & septic service with 24/7 emergency response. Stop Freakin'... Call Beacon!"
+      path="/"
+      jsonLd={schema}
+    />
+  </Fragment>
+
+  <Hero />
+  <CoreServices />
+  <EmergencyBand />
+  <WhyBeacon />
+  <ServiceAreasPreview />
+  <Financing />
+  <Reviews />
+  <FAQSection />
+  <FinalCTA />
+</Layout>

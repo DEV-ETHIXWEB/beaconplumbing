@@ -1,0 +1,24 @@
+---
+import { Image } from 'astro:assets';
+import synchronyLogo from '../../assets/brand/synchrony-logo.webp';
+import { business } from '../../data/business';
+import Container from '../ui/Container.astro';
+import Button from '../ui/Button.astro';
+---
+
+<section class="bg-brand-500 py-14 sm:py-16">
+  <Container class="flex flex-col items-center justify-between gap-8 rounded-2xl bg-white p-8 shadow-xl sm:flex-row sm:p-10">
+    <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-center">
+      <Image src={synchronyLogo} alt="Synchrony Financing" width={150} height={47} class="h-10 w-auto" />
+      <div class="text-center sm:border-l sm:border-ink-200 sm:pl-6 sm:text-left">
+        <h2 class="font-display text-xl font-bold text-ink-900 sm:text-2xl">Flexible Financing Available</h2>
+        <p class="mt-1 max-w-md text-sm text-ink-500">
+          Don&rsquo;t let cost delay an important repair. Beacon offers financing through {business.financing.partner}.
+        </p>
+      </div>
+    </div>
+    <Button href={business.financing.applyUrl} variant="secondary" size="md" class="shrink-0">
+      Learn About Financing
+    </Button>
+  </Container>
+</section>
