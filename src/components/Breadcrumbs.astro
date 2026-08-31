@@ -1,0 +1,33 @@
+---
+import { siteUrl } from '../data/site';
+import { breadcrumbListSchema, safeJsonLdStringify, type BreadcrumbItem } from '../lib/seo';
+
+interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+const allItems: BreadcrumbItem[] = [{ name: 'Home', url: '/' }, ...items];
+const schema = breadcrumbListSchema(allItems, siteUrl);
+---
+
+<script type="application/ld+json" is:inline set:html={safeJsonLdStringify(schema)} />
+
+<nav aria-label="Breadcrumb" class="text-sm">
+  <ol class="flex flex-wrap items-center gap-1.5 text-ink-500">
+    {allItems.map((item, index) => (
+      <li class="flex items-center gap-1.5">
+        {index > 0 && (
+          <svg viewBox="0 0 20 20" class="h-3.5 w-3.5 shrink-0 text-ink-300" fill="currentColor" aria-hidden="true">
+            <path d="M7.5 5l5 5-5 5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        )}
+        {index === allItems.length - 1 ? (
+          <span class="font-medium text-ink-700" aria-current="page">{item.name}</span>
+        ) : (
+          <a href={item.url} class="transition-colors hover:text-brand-500">{item.name}</a>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>

@@ -1,0 +1,70 @@
+---
+import Container from '../ui/Container.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Icon3D from '../ui/Icon3D.astro';
+import { serviceCategories } from '../../data/services';
+---
+
+<section class="bg-white py-16 sm:py-24">
+  <Container>
+    <div class="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+      <SectionHeading
+        eyebrow="What We Do"
+        title="Full-Service Plumbing, Heating & Electrical"
+        description="One trusted team for every trade in your home, from a dripping faucet to a full furnace replacement."
+      />
+      <a href="/services" class="hidden shrink-0 items-center gap-1.5 font-display text-sm font-semibold text-brand-600 hover:text-brand-700 sm:inline-flex">
+        View all services
+        <svg viewBox="0 0 20 20" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M4 10h12M11 5l5 5-5 5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </a>
+    </div>
+
+    <div class="reveal-group mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {serviceCategories.map((category, index) => {
+        const isFeatured = index === 0;
+        return (
+          <a
+            href={`/services/${category.slug}`}
+            class={`reveal-item spotlight-card group relative flex flex-col overflow-hidden rounded-xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${
+              isFeatured
+                ? 'spotlight-card--dark border-brand-800 bg-gradient-to-br from-brand-600 via-brand-700 to-brand-950 shadow-md sm:col-span-2 sm:row-span-2'
+                : 'border-ink-100 bg-white shadow-sm'
+            }`}
+          >
+            <div class={`relative flex flex-1 flex-col gap-3 p-6 ${isFeatured ? 'sm:p-8' : ''}`}>
+              <Icon3D
+                name={category.icon}
+                class={`w-auto shrink-0 self-start origin-left transition-transform duration-300 ease-out group-hover:scale-110 group-hover:-rotate-2 ${
+                  isFeatured ? 'h-28 sm:h-36' : 'h-20'
+                }`}
+              />
+              <div class="mt-auto flex flex-col items-start gap-2">
+                <h3 class={`font-display text-xl font-bold sm:text-2xl ${isFeatured ? 'text-white' : 'text-ink-900'}`}>
+                  {category.name}
+                </h3>
+                <p class={`max-w-sm text-sm ${isFeatured ? 'text-brand-100' : 'text-ink-500'}`}>{category.description}</p>
+                <span
+                  class={`mt-1 inline-flex items-center gap-1 text-sm font-semibold ${isFeatured ? 'text-gold-400' : 'text-brand-600'}`}
+                >
+                  Explore services
+                  <svg viewBox="0 0 20 20" class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M4 10h12M11 5l5 5-5 5" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </a>
+        );
+      })}
+    </div>
+
+    <a href="/services" class="mt-8 flex items-center justify-center gap-1.5 font-display text-sm font-semibold text-brand-600 sm:hidden">
+      View all services
+      <svg viewBox="0 0 20 20" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M4 10h12M11 5l5 5-5 5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </a>
+  </Container>
+</section>

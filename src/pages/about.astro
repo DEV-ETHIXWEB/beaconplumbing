@@ -1,0 +1,272 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SEOHead from '../components/SEOHead.astro';
+import PageHero from '../components/sections/PageHero.astro';
+import Container from '../components/ui/Container.astro';
+import Button from '../components/ui/Button.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import Icon3D, { type IconName } from '../components/ui/Icon3D.astro';
+import { business } from '../data/business';
+import { serviceCategories } from '../data/services';
+
+const yearsInBusiness = new Date().getFullYear() - business.foundingYear;
+
+const stats = [
+  { value: `${yearsInBusiness}+`, label: 'Years Serving Puget Sound' },
+  { value: business.tradesServed.length, label: 'Trades Under One Roof' },
+  { value: '24/7', label: 'Emergency Response' },
+  { value: '1', label: 'Family-Owned Company' },
+];
+
+const timeline = [
+  {
+    year: String(business.foundingYear),
+    title: 'Beacon is founded',
+    description: `${business.founder} starts Beacon Plumbing on a simple promise: honest work, fair pricing, and showing up when neighbors need it most.`,
+  },
+  {
+    year: 'Since then',
+    title: 'One team, every trade',
+    description:
+      'What began as a plumbing outfit grows into a full-service team covering sewer & drain, heating & HVAC, air conditioning, electrical, and septic service, all under one roof.',
+  },
+  {
+    year: 'Today',
+    title: `${yearsInBusiness}+ years and counting`,
+    description: `Still family-owned and operated, still licensed under Washington Contractors License #${business.license.number}, and still answering the phone 24/7 across the greater Puget Sound region.`,
+  },
+];
+
+const values: { title: string; description: string; icon?: IconName }[] = [
+  {
+    title: 'Upfront, Honest Pricing',
+    description: "You'll know the price before we start. No surprises, no hidden fees, and no trip charge just to get a quote.",
+    icon: 'upfront-pricing',
+  },
+  {
+    title: 'We Show Up Fast',
+    description: "Emergencies don't wait, so neither do we. 90-minute response and 24/7/365 availability across Puget Sound.",
+    icon: '90-minute-response',
+  },
+  {
+    title: 'Work Backed by a Guarantee',
+    description: 'Every repair and installation is covered by our 1-year guarantee, because we stand behind our work.',
+    icon: '1-year-guarantee',
+  },
+  {
+    title: 'Proud to Serve Our Community',
+    description: 'Family-owned since 1999, with discounts for active-duty and veteran military members.',
+    icon: undefined,
+  },
+];
+---
+
+<Layout>
+  <Fragment slot="head">
+    <SEOHead
+      title="About Beacon Plumbing | Seattle's Trusted Plumber Since 1999"
+      description="Beacon Plumbing has served the greater Seattle area since 1999. Learn about our licensed, family-owned plumbing, heating, electrical & septic company."
+      path="/about"
+    />
+  </Fragment>
+
+  <PageHero
+    eyebrow="About Us"
+    title="Seattle's Trusted Plumbing, Heating & Electrical Team"
+    description={`${business.name} has served the greater Puget Sound region since ${business.foundingYear}.`}
+    breadcrumbs={[{ name: 'About', url: '/about' }]}
+    backgroundImage="/images/seattle-space-needle-1024x576.jpg"
+  />
+
+  <section class="bg-white py-16 sm:py-20">
+    <Container class="mx-auto max-w-3xl">
+      <div class="prose-content flex flex-col gap-5 text-ink-600">
+        <p class="text-lg leading-relaxed">
+          {business.legalName} was founded in {business.foundingYear} by {business.founder}, with a simple goal:
+          bring honest, dependable plumbing service to homeowners and businesses across the greater Seattle area.
+          Over {yearsInBusiness}+ years, that mission has grown into a full-service
+          team covering plumbing, sewer &amp; drain, heating &amp; HVAC, air conditioning, electrical, and septic
+          service, all under one roof.
+        </p>
+        <p class="leading-relaxed">
+          Beacon Plumbing is licensed, bonded, and insured under Washington Contractors License #{business.license.number},
+          and remains a family-owned and operated company. We proudly offer discounts for active-duty and veteran
+          military members, and our technicians are available 24/7 for emergency service across Puget Sound.
+        </p>
+        <p class="leading-relaxed">
+          {business.tagline}
+        </p>
+      </div>
+
+      <div class="mt-10 grid grid-cols-2 gap-5 sm:grid-cols-4">
+        {business.trustBadges.map((badge) => (
+          <div class="flex flex-col items-center gap-2 rounded-xl border border-ink-100 bg-ink-50 p-5 text-center">
+            <svg viewBox="0 0 20 20" class="h-6 w-6 text-brand-500" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0L3.3 9.7a1 1 0 1 1 1.4-1.4L8 11.6l6.8-6.8a1 1 0 0 1 1.4 0z" clip-rule="evenodd" />
+            </svg>
+            <span class="text-sm font-semibold text-ink-800">{badge.label}</span>
+          </div>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <section class="bg-ink-50 py-16 sm:py-20">
+    <Container>
+      <div class="reveal-group grid grid-cols-2 gap-5 sm:grid-cols-4">
+        {stats.map((stat) => (
+          <div class="spotlight-card reveal-item rounded-xl border border-ink-100 bg-white p-6 text-center shadow-sm transition-shadow duration-300 hover:shadow-md">
+            <div class="relative font-display text-3xl font-extrabold text-brand-600 sm:text-4xl">{stat.value}</div>
+            <p class="relative mt-1 text-sm font-medium text-ink-600">{stat.label}</p>
+          </div>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <section class="bg-white py-16 sm:py-24">
+    <Container class="mx-auto max-w-3xl">
+      <SectionHeading eyebrow="Our Story" title="From one truck to a full-service team" />
+
+      <div id="story-timeline" class="relative mt-10">
+        <div class="absolute left-4 top-0 h-full w-0.5 -translate-x-1/2 bg-brand-100" aria-hidden="true"></div>
+        <div id="story-timeline-fill" class="absolute left-4 top-0 h-full w-0.5 -translate-x-1/2 origin-top scale-y-0 bg-brand-500" aria-hidden="true"></div>
+
+        <div class="flex flex-col gap-10">
+          {timeline.map((item) => (
+            <div class="relative pl-9">
+              <span class="absolute left-4 top-1 flex h-4 w-4 -translate-x-1/2 items-center justify-center rounded-full border-2 border-brand-500 bg-white" aria-hidden="true">
+                <span class="h-1.5 w-1.5 rounded-full bg-brand-500"></span>
+              </span>
+              <span class="text-xs font-semibold uppercase tracking-widest text-accent-600">{item.year}</span>
+              <h3 class="mt-1 font-display text-xl font-bold text-ink-900">{item.title}</h3>
+              <p class="mt-2 leading-relaxed text-ink-600">{item.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <script>
+    // Draws the "Our Story" timeline line in sync with scroll position, in
+    // both directions, rather than a one-time reveal like .reveal-item.
+    const wrap = document.getElementById('story-timeline');
+    const fill = document.getElementById('story-timeline-fill');
+
+    if (wrap && fill) {
+      const reduceMotion =
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+        document.documentElement.classList.contains('a11y-reduce-motion');
+
+      if (reduceMotion) {
+        fill.style.transform = 'scaleY(1)';
+      } else {
+        let ticking = false;
+
+        const update = () => {
+          ticking = false;
+          const rect = wrap.getBoundingClientRect();
+          const viewportH = window.innerHeight;
+          // Line starts drawing once its top is 85% down the viewport, and
+          // finishes once its bottom nears 35% from the top, so it completes
+          // just before the section scrolls out of view.
+          const start = viewportH * 0.85;
+          const end = viewportH * 0.35;
+          const total = rect.height + (start - end);
+          const progress = Math.min(1, Math.max(0, (start - rect.top) / total));
+          fill.style.transform = `scaleY(${progress})`;
+        };
+
+        const onScroll = () => {
+          if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(update);
+          }
+        };
+
+        update();
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll);
+      }
+    }
+  </script>
+
+  <section class="bg-ink-50 py-16 sm:py-24">
+    <Container>
+      <SectionHeading
+        eyebrow="What Drives Us"
+        title="The values behind every job"
+        description="These aren't slogans, they're the standard every Beacon technician is held to on every visit."
+        align="center"
+        class="mx-auto"
+      />
+
+      <div class="reveal-group mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {values.map((value) => (
+          <div class="reveal-item spotlight-card flex flex-col gap-4 rounded-xl border border-ink-100 bg-white p-6 shadow-sm transition-shadow duration-300 hover:shadow-md">
+            {value.icon ? (
+              <Icon3D name={value.icon} class="relative h-14 w-auto shrink-0" />
+            ) : (
+              <div class="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+                <svg viewBox="0 0 20 20" class="h-5 w-5" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0L3.3 9.7a1 1 0 1 1 1.4-1.4L8 11.6l6.8-6.8a1 1 0 0 1 1.4 0z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            )}
+            <div class="relative">
+              <h3 class="font-display font-semibold text-ink-900">{value.title}</h3>
+              <p class="mt-1 text-sm leading-relaxed text-ink-500">{value.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <section class="bg-white py-16 sm:py-24">
+    <Container>
+      <div class="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+        <SectionHeading
+          eyebrow="Under One Roof"
+          title="Every trade your home needs"
+          description="No juggling separate companies for every problem. One trusted Beacon team handles it all."
+        />
+        <a href="/services" class="hidden shrink-0 items-center gap-1.5 font-display text-sm font-semibold text-brand-600 hover:text-brand-700 sm:inline-flex">
+          View all services
+          <svg viewBox="0 0 20 20" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M4 10h12M11 5l5 5-5 5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+      </div>
+
+      <div class="reveal-group mt-10 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6">
+        {serviceCategories.map((category) => (
+          <a
+            href={`/services/${category.slug}`}
+            class="reveal-item spotlight-card group flex flex-col items-center gap-3 rounded-xl border border-ink-100 bg-ink-50 p-5 text-center transition-all duration-300 hover:-translate-y-1 hover:border-brand-200 hover:bg-white hover:shadow-md"
+          >
+            <Icon3D
+              name={category.icon}
+              class="relative h-16 w-auto shrink-0 transition-transform duration-300 ease-out group-hover:scale-110 group-hover:-rotate-2"
+            />
+            <span class="relative font-display text-sm font-semibold text-ink-800">{category.name}</span>
+          </a>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <section class="bg-white pb-16 sm:pb-20">
+    <Container>
+      <div class="flex flex-col items-center gap-4 rounded-2xl bg-brand-950 p-8 text-center text-white sm:p-10">
+        <h2 class="font-display text-2xl font-bold text-white">Ready to get started?</h2>
+        <p class="max-w-lg text-brand-100">Reach the Beacon team 24/7 for emergency service or to schedule a visit.</p>
+        <div class="flex flex-wrap justify-center gap-3">
+          <Button href={business.phone.href} variant="primary" size="lg" icon="phone">Call {business.phone.display}</Button>
+          <Button href="/contact" variant="outline" size="lg" class="border-white text-white hover:bg-white/10 hover:text-white">Contact Us</Button>
+        </div>
+      </div>
+    </Container>
+  </section>
+</Layout>

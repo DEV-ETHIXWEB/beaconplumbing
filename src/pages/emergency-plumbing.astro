@@ -1,0 +1,106 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SEOHead from '../components/SEOHead.astro';
+import Container from '../components/ui/Container.astro';
+import Button from '../components/ui/Button.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import FAQAccordion from '../components/sections/FAQAccordion';
+import { business } from '../data/business';
+import { siteUrl } from '../data/site';
+import { serviceSchema } from '../lib/seo';
+
+const emergencyFaqs = [
+  {
+    question: 'What counts as a plumbing emergency?',
+    answer:
+      'Burst or leaking pipes, sewer backups, no hot water, gas leaks, and flooding are all situations that warrant an emergency call. If you’re unsure, call us and we’ll help you assess the situation.',
+  },
+  {
+    question: 'Is Beacon Plumbing available 24/7?',
+    answer: 'Yes. Beacon Plumbing provides 24/7 emergency response for plumbing, heating, and electrical issues, 365 days a year.',
+  },
+  {
+    question: 'How fast can Beacon respond to an emergency?',
+    answer:
+      'Response times vary by location and current demand. Call us directly for the fastest, most accurate estimate for your area.',
+  },
+];
+
+const schema = serviceSchema({
+  serviceName: 'Emergency Plumbing',
+  description: '24/7 emergency plumbing response for burst pipes, sewer backups, leaks, and no-hot-water situations across the greater Seattle area.',
+  providerName: business.name,
+  providerUrl: siteUrl,
+  url: `${siteUrl}/emergency-plumbing`,
+});
+---
+
+<Layout>
+  <Fragment slot="head">
+    <SEOHead
+      title="24/7 Emergency Plumber in Seattle, WA | Beacon Plumbing"
+      description="Burst pipe, sewer backup, or no hot water? Beacon Plumbing provides 24/7 emergency plumbing response across the greater Seattle area. Call (206) 800-6269."
+      path="/emergency-plumbing"
+      jsonLd={schema}
+    />
+  </Fragment>
+
+  <section class="relative overflow-hidden bg-gradient-to-br from-accent-700 via-accent-600 to-accent-800 py-16 sm:py-24">
+    <div class="pointer-events-none absolute inset-0 opacity-10" aria-hidden="true">
+      <svg width="100%" height="100%">
+        <pattern id="emergency-hero-dots" width="24" height="24" patternUnits="userSpaceOnUse">
+          <circle cx="2" cy="2" r="1.5" fill="white" />
+        </pattern>
+        <rect width="100%" height="100%" fill="url(#emergency-hero-dots)" />
+      </svg>
+    </div>
+    <Container class="relative flex flex-col items-start gap-6">
+      <div class="[&_a]:text-white/70 [&_a:hover]:text-white [&_span]:text-white [&_svg]:text-white/50">
+        <Breadcrumbs items={[{ name: 'Emergency Plumbing', url: '/emergency-plumbing' }]} />
+      </div>
+      <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-white ring-1 ring-white/30">
+        24/7/365 Emergency Response
+      </span>
+      <h1 class="max-w-2xl text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+        Plumbing Emergency? Beacon Is Ready Right Now.
+      </h1>
+      <p class="max-w-xl text-lg text-white/90">
+        Burst pipes, sewer backups, no hot water, or flooding: our licensed technicians respond around the
+        clock, every day of the year, across the greater Seattle area.
+      </p>
+      <Button href={business.phone.href} variant="secondary" size="lg" icon="phone" class="!bg-white !text-accent-600 hover:!bg-brand-50">
+        Call {business.phone.display} Now
+      </Button>
+    </Container>
+  </section>
+
+  <section class="bg-white py-16 sm:py-20">
+    <Container class="mx-auto max-w-3xl">
+      <h2 class="font-display text-2xl font-bold text-ink-900">Common Plumbing Emergencies We Handle</h2>
+      <ul class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {[
+          'Burst or frozen pipes',
+          'Sewer line backups',
+          'No hot water',
+          'Flooding & water damage',
+          'Major leaks',
+          'Gas line issues',
+          'Sump pump failure',
+          'Clogged or overflowing drains',
+        ].map((item) => (
+          <li class="flex items-center gap-2.5 rounded-lg border border-ink-100 bg-ink-50 px-4 py-3 text-sm font-medium text-ink-700">
+            <svg viewBox="0 0 20 20" class="h-4 w-4 shrink-0 text-accent-500" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0L3.3 9.7a1 1 0 1 1 1.4-1.4L8 11.6l6.8-6.8a1 1 0 0 1 1.4 0z" clip-rule="evenodd" />
+            </svg>
+            {item}
+          </li>
+        ))}
+      </ul>
+
+      <div class="mt-14">
+        <h2 class="mb-6 font-display text-2xl font-bold text-ink-900">Emergency FAQs</h2>
+        <FAQAccordion client:visible items={emergencyFaqs} />
+      </div>
+    </Container>
+  </section>
+</Layout>

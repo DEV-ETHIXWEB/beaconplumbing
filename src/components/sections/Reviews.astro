@@ -1,0 +1,138 @@
+---
+import Container from '../ui/Container.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Button from '../ui/Button.astro';
+import { testimonials } from '../../data/testimonials';
+import { business } from '../../data/business';
+
+function Stars() {
+  return Array.from({ length: 5 });
+}
+
+// Duplicated once for a seamless CSS-only loop (see .reviews-track below).
+// The second copy is aria-hidden so screen readers only ever hear each real
+// review once.
+const loopedReviews = [...testimonials, ...testimonials];
+---
+
+<section class="bg-white py-16 sm:py-24">
+  <Container>
+    <div class="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+      <SectionHeading
+        eyebrow="Customer Reviews"
+        title="What our customers are saying"
+        description="Real reviews from real Beacon customers across the Puget Sound area."
+      />
+      <div class="flex shrink-0 items-center gap-4">
+        <button
+          type="button"
+          id="reviews-marquee-toggle"
+          aria-pressed="false"
+          class="hidden items-center gap-1.5 rounded-full border border-ink-200 px-3 py-1.5 text-xs font-semibold text-ink-600 transition-colors hover:border-brand-300 hover:text-brand-700 motion-safe:inline-flex"
+        >
+          <svg data-icon="pause" viewBox="0 0 20 20" class="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
+            <path d="M6 4h2.5v12H6V4zm5.5 0H14v12h-2.5V4z" />
+          </svg>
+          <svg data-icon="play" viewBox="0 0 20 20" class="hidden h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
+            <path d="M6 4.5v11l9-5.5-9-5.5z" />
+          </svg>
+          <span data-label>Pause</span>
+        </button>
+        <a
+          href="/reviews"
+          class="hidden shrink-0 items-center gap-1.5 font-display text-sm font-semibold text-brand-600 hover:text-brand-700 sm:inline-flex"
+        >
+          Read all reviews
+          <svg viewBox="0 0 20 20" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M4 10h12M11 5l5 5-5 5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div
+      id="reviews-marquee"
+      class="reveal-item group/marquee relative mt-10 -mx-4 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_2rem,black_calc(100%-2rem),transparent)] sm:-mx-6 lg:mx-0"
+    >
+      <div class="reviews-track flex w-max gap-5 px-4 sm:px-6 lg:px-0">
+        {loopedReviews.map((review, index) => (
+          <figure
+            aria-hidden={index >= testimonials.length ? 'true' : undefined}
+            class="flex w-[300px] shrink-0 flex-col gap-4 rounded-xl border border-ink-100 bg-white p-6 shadow-sm sm:w-[360px]"
+          >
+            <div class="flex gap-0.5 text-gold-500" aria-label={`${review.rating} out of 5 stars`}>
+              {Stars().map(() => (
+                <svg viewBox="0 0 20 20" class="h-4 w-4" fill="currentColor" aria-hidden="true">
+                  <path d="M10 1.5l2.6 5.3 5.9.85-4.25 4.15 1 5.85L10 14.9l-5.25 2.75 1-5.85L1.5 7.65l5.9-.85z" />
+                </svg>
+              ))}
+            </div>
+            <blockquote class="text-sm leading-relaxed text-ink-600">&ldquo;{review.quote}&rdquo;</blockquote>
+            <figcaption class="mt-auto text-sm font-semibold text-ink-900">{review.name}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+
+    <div class="mt-10 flex flex-col items-center gap-4 rounded-xl bg-ink-50 p-6 text-center sm:flex-row sm:justify-between sm:text-left">
+      <p class="text-sm text-ink-500">
+        See more verified reviews on our Google Business Profile and BBB listing.
+      </p>
+      <div class="flex gap-3">
+        <Button href={business.bbb.profileUrl} variant="outline" size="md">View BBB Profile</Button>
+      </div>
+    </div>
+  </Container>
+</section>
+
+<style>
+  @keyframes reviews-scroll {
+    from {
+      transform: translateX(-50%);
+    }
+    to {
+      transform: translateX(0%);
+    }
+  }
+
+  .reviews-track {
+    animation: reviews-scroll 45s linear infinite;
+  }
+
+  /* Hover pauses for mouse users; the explicit button (below) covers
+     keyboard and touch users, satisfying WCAG 2.2.2 Pause/Stop/Hide for
+     content that moves automatically for more than 5 seconds. */
+  #reviews-marquee:hover .reviews-track {
+    animation-play-state: paused;
+  }
+
+  #reviews-marquee.is-paused .reviews-track {
+    animation-play-state: paused;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reviews-track {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  const marquee = document.getElementById('reviews-marquee');
+  const toggle = document.getElementById('reviews-marquee-toggle');
+  if (marquee && toggle) {
+    const pauseIcon = toggle.querySelector('[data-icon="pause"]');
+    const playIcon = toggle.querySelector('[data-icon="play"]');
+    const label = toggle.querySelector('[data-label]');
+
+    const setState = (paused: boolean) => {
+      marquee.classList.toggle('is-paused', paused);
+      toggle.setAttribute('aria-pressed', String(paused));
+      pauseIcon?.classList.toggle('hidden', paused);
+      playIcon?.classList.toggle('hidden', !paused);
+      if (label) label.textContent = paused ? 'Play' : 'Pause';
+    };
+
+    toggle.addEventListener('click', () => setState(!marquee.classList.contains('is-paused')));
+  }
+</script>

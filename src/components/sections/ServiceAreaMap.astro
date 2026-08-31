@@ -1,0 +1,249 @@
+---
+// Free, keyless map (Leaflet + OpenStreetMap/CARTO tiles) — no Google Maps
+// API key required, no billing account needed. Business HQ + every service
+// area from src/data/locations.ts are plotted client-side.
+import 'leaflet/dist/leaflet.css';
+import { business } from '../../data/business';
+import { serviceAreas, regions } from '../../data/locations';
+
+interface Props {
+  /** Shorter map + no legend, for embedding inside a smaller preview section. */
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+
+const regionColors: Record<string, string> = {
+  'Seattle Metro': '#0456a7',
+  Eastside: '#0b8a5e',
+  'South King & Pierce County': '#c8790a',
+  'Snohomish County': '#7c3aed',
+  'Kitsap Peninsula': '#c81419',
+};
+
+const mapPoints = serviceAreas.map((area) => ({
+  slug: area.slug,
+  name: area.name,
+  region: area.region,
+  lat: area.lat,
+  lng: area.lng,
+  color: regionColors[area.region],
+}));
+---
+
+<div class="reveal-item">
+  {!compact && (
+    <div class="flex flex-wrap items-center gap-x-5 gap-y-2 pb-4 text-xs font-medium text-ink-600">
+      <span class="inline-flex items-center gap-1.5">
+        <span class="h-3 w-3 shrink-0 rounded-full border-2 border-white bg-accent-500 shadow"></span>
+        Beacon Plumbing HQ
+      </span>
+      {regions.map((region) => (
+        <span class="inline-flex items-center gap-1.5">
+          <span class="h-2.5 w-2.5 shrink-0 rounded-full" style={`background-color:${regionColors[region]}`}></span>
+          {region}
+        </span>
+      ))}
+    </div>
+  )}
+
+  <div
+    id="service-area-map"
+    class={`w-full rounded-xl border border-ink-100 shadow-sm ${compact ? 'h-[340px] sm:h-[420px]' : 'h-[420px] sm:h-[520px]'}`}
+    data-hq={JSON.stringify({ lat: business.address.lat, lng: business.address.lng, name: business.name })}
+    data-points={JSON.stringify(mapPoints)}
+  >
+  </div>
+  <p class="mt-2 text-xs text-ink-400">Map data &copy; OpenStreetMap contributors.</p>
+</div>
+
+<style is:global>
+  /* Leaflet renders these markers/tooltips into the DOM at runtime, outside
+     Astro's component scoping, so these have to be global rules.
+
+     The scale-on-hover lives on the INNER dot, not the marker wrapper itself
+     — Leaflet positions each marker with its own inline `transform:
+     translate3d(...)`, and a CSS rule (even on :hover) can never win against
+     an inline style. Scaling a child element avoids that fight entirely. */
+  .map-marker-dot {
+    position: relative;
+    cursor: pointer;
+  }
+  .map-marker-dot .map-marker-dot__inner {
+    transition: transform 150ms ease, box-shadow 150ms ease;
+    transform-origin: center;
+  }
+  .map-marker-dot:hover .map-marker-dot__inner,
+  .map-marker-dot:focus-within .map-marker-dot__inner {
+    transform: scale(1.6);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  /* The hover card is built on Leaflet's Popup (not Tooltip) — Tooltip's
+     non-permanent mode has an internal quirk that silently swallows real
+     clicks on interactive content inside it, which is exactly what made
+     "Book Service" unclickable in the first place. Popup doesn't have that
+     problem and supports the same manual open/close-on-hover control, so
+     these rules strip its default chrome (arrow, close button, padding) to
+     look identical to a tooltip. */
+  .map-tooltip .leaflet-popup-content-wrapper {
+    background: white;
+    border: 1px solid #e9edf3;
+    border-radius: 0.625rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    padding: 0;
+  }
+  .map-tooltip .leaflet-popup-content {
+    margin: 0;
+    width: auto !important;
+  }
+  .map-tooltip .leaflet-popup-tip-container {
+    display: none;
+  }
+  .map-tooltip .map-tooltip__body {
+    padding: 0.625rem 0.75rem;
+    font-family: inherit;
+  }
+  .map-tooltip .map-tooltip__title {
+    font-weight: 700;
+    color: #171b24;
+    font-size: 0.875rem;
+  }
+  .map-tooltip .map-tooltip__region {
+    color: #5b6b81;
+    font-size: 0.75rem;
+    margin-top: 0.125rem;
+  }
+  .map-tooltip .map-tooltip__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: white;
+    background: #ed1f24;
+    border-radius: 0.375rem;
+    padding: 0.3rem 0.6rem;
+    text-decoration: none;
+  }
+</style>
+
+<script>
+  import L from 'leaflet';
+
+  function markerIcon(color: string, size: number) {
+    return L.divIcon({
+      className: 'map-marker-dot',
+      // Centered via left/margin-left (not `transform: translateX`) so the
+      // `transform` property is left free for the CSS hover-scale rule —
+      // an inline transform would otherwise always beat a stylesheet rule
+      // for the same property, hover or not.
+      html: `<span class="map-marker-dot__inner" style="position:absolute;top:0;left:50%;margin-left:-${size / 2}px;width:${size}px;height:${size}px;border-radius:9999px;background:${color};border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.4);"></span>`,
+      iconSize: [size, size],
+      iconAnchor: [size / 2, size / 2],
+    });
+  }
+
+  // Built on Popup, not Tooltip (see the CSS comment above for why) and
+  // driven entirely by our own hover handlers rather than Leaflet's
+  // automatic tooltip show/hide — Popup doesn't auto-close on mouseout at
+  // all, so there's no default behavior to fight. Leaving the marker
+  // schedules a close; landing on the marker again or on the popup itself
+  // (which is what the cursor is actually travelling toward) cancels it, so
+  // there's time to reach "Book Service" before it disappears.
+  function bindHoverTooltip(marker: L.Marker, content: string, popupOptions: L.PopupOptions) {
+    marker.bindPopup(content, { closeButton: false, autoClose: false, closeOnClick: false, autoPan: false, ...popupOptions });
+
+    let closeTimer: ReturnType<typeof setTimeout> | undefined;
+    const cancelClose = () => clearTimeout(closeTimer);
+    const scheduleClose = () => {
+      clearTimeout(closeTimer);
+      closeTimer = setTimeout(() => marker.closePopup(), 400);
+    };
+
+    marker.on('mouseover', () => {
+      cancelClose();
+      marker.openPopup();
+    });
+    marker.on('mouseout', scheduleClose);
+    marker.on('popupopen', (e) => {
+      const popupEl = e.popup.getElement();
+      if (!popupEl) return;
+      popupEl.addEventListener('mouseenter', cancelClose);
+      popupEl.addEventListener('mouseleave', scheduleClose);
+    });
+  }
+
+  function init() {
+    const el = document.getElementById('service-area-map');
+    if (!el || (el as any)._leaflet_id) return;
+
+    const hq = JSON.parse(el.dataset.hq || '{}');
+    const points: { slug: string; name: string; region: string; lat: number; lng: number; color: string }[] =
+      JSON.parse(el.dataset.points || '[]');
+
+    // Compute the final bounds up front so the map's very first paint is
+    // already at the right view — no wasted/aborted tile fetch at a
+    // throwaway initial zoom.
+    const bounds = L.latLngBounds([[hq.lat, hq.lng]]);
+    for (const point of points) bounds.extend([point.lat, point.lng]);
+
+    const map = L.map(el, { scrollWheelZoom: false }).fitBounds(bounds, { padding: [24, 24] });
+
+    // Standard OpenStreetMap tiles — genuinely free, no API key or account
+    // required (unlike most "free" hosted tile providers, which increasingly
+    // gate their nicer styles behind a signup).
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 19,
+    }).addTo(map);
+
+    const popupOptions: L.PopupOptions = {
+      offset: [0, -6],
+      className: 'map-tooltip',
+    };
+
+    bindHoverTooltip(
+      L.marker([hq.lat, hq.lng], { icon: markerIcon('#ed1f24', 18) }).addTo(map),
+      `<div class="map-tooltip__body">
+         <div class="map-tooltip__title">${hq.name}</div>
+         <div class="map-tooltip__region">Headquarters</div>
+       </div>`,
+      popupOptions
+    );
+
+    for (const point of points) {
+      // Hover previews the city + region; the "Book Service" link is a real,
+      // clickable target, kept open by bindHoverTooltip's grace period (see
+      // above) so the cursor has time to travel from the small marker up to
+      // the link without the tooltip closing first. The marker itself is
+      // also clickable, as a fallback for touch devices where hover doesn't
+      // really exist and tap fires click instead.
+      const marker = L.marker([point.lat, point.lng], { icon: markerIcon(point.color, 12) }).addTo(map);
+      bindHoverTooltip(
+        marker,
+        `<div class="map-tooltip__body">
+           <div class="map-tooltip__title">${point.name}</div>
+           <div class="map-tooltip__region">${point.region}</div>
+           <a class="map-tooltip__cta" href="/contact">Book Service &rarr;</a>
+         </div>`,
+        popupOptions
+      );
+      marker.on('click', () => {
+        window.location.href = '/contact';
+      });
+    }
+
+    // Let two-finger/scroll-wheel zoom work once the user is actually
+    // interacting with the map, without hijacking page scroll otherwise.
+    el.addEventListener('click', () => map.scrollWheelZoom.enable());
+    el.addEventListener('mouseleave', () => map.scrollWheelZoom.disable());
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+</script>

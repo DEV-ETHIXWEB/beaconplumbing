@@ -1,0 +1,97 @@
+---
+import { business } from '../../data/business';
+import Container from '../ui/Container.astro';
+import Button from '../ui/Button.astro';
+---
+
+<section class="relative isolate overflow-hidden bg-brand-950 py-20 sm:py-24 lg:py-32">
+  <div class="absolute inset-0 z-0" aria-hidden="true">
+    <img
+      src="/video/hero-poster.jpg"
+      alt=""
+      fetchpriority="high"
+      class="h-full w-full object-cover md:hidden"
+    />
+    <video
+      id="hero-video"
+      class="hidden h-full w-full object-cover md:block"
+      poster="/video/hero-poster.jpg"
+      muted
+      loop
+      playsinline
+      preload="metadata"
+    >
+      <source src="/video/hero-seattle.webm" type="video/webm" />
+      <source src="/video/hero-seattle.mp4" type="video/mp4" />
+    </video>
+  </div>
+
+  <div
+    class="absolute inset-0 z-10 bg-gradient-to-r from-brand-950/90 via-brand-950/70 to-brand-950/45 md:from-brand-950/85 md:via-brand-950/55 md:to-brand-950/20"
+    aria-hidden="true"
+  ></div>
+  <div class="absolute inset-0 z-10 bg-gradient-to-t from-brand-950/70 via-transparent to-transparent" aria-hidden="true"></div>
+
+  <Container class="relative z-20">
+    <div class="flex max-w-2xl flex-col items-start gap-6 animate-fade-up">
+      <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white ring-1 ring-white/20 backdrop-blur">
+        <span class="h-1.5 w-1.5 rounded-full bg-gold-500"></span>
+        Serving Puget Sound Since {business.foundingYear}
+      </span>
+
+      <h1 class="max-w-xl text-4xl font-extrabold leading-[1.08] text-white sm:text-5xl lg:text-6xl">
+        Seattle&rsquo;s Plumber, Electrician &amp; HVAC Team,
+        <span class="text-gold-500">On Call 24/7</span>
+      </h1>
+
+      <p class="max-w-lg text-lg leading-relaxed text-brand-100">
+        {business.tagline} Licensed, bonded, and insured plumbing, heating, electrical, and septic
+        service across the greater Seattle area, day or night.
+      </p>
+
+      <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+        <Button href={business.phone.href} variant="primary" size="lg" icon="phone">
+          Call {business.phone.display}
+        </Button>
+        <Button href="/contact" variant="outline" size="lg" class="border-white text-white hover:bg-white/10 hover:text-white">
+          Request Service
+        </Button>
+      </div>
+
+      <div class="mt-2 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-brand-100">
+        {business.trustBadges.map((badge) => (
+          <span class="inline-flex items-center gap-1.5">
+            <svg viewBox="0 0 20 20" class="h-4 w-4 shrink-0 text-gold-500" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0L3.3 9.7a1 1 0 1 1 1.4-1.4L8 11.6l6.8-6.8a1 1 0 0 1 1.4 0z" clip-rule="evenodd" />
+            </svg>
+            {badge.label}
+          </span>
+        ))}
+      </div>
+    </div>
+  </Container>
+
+  <div class="absolute bottom-6 right-4 z-20 hidden rounded-xl bg-white/95 px-5 py-4 shadow-xl backdrop-blur sm:block lg:right-8">
+    <p class="font-display text-2xl font-extrabold text-brand-600">24/7</p>
+    <p class="text-xs font-medium text-ink-500">Emergency Response</p>
+  </div>
+</section>
+
+<script>
+  const video = document.getElementById('hero-video') as HTMLVideoElement | null;
+  const reducedMotion = () =>
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+    document.documentElement.classList.contains('a11y-reduce-motion');
+
+  if (video && !reducedMotion()) {
+    video.play().catch(() => {});
+  }
+
+  // The accessibility widget's "reduce motion" toggle can flip mid-session
+  // (not just at page load), so react live rather than only checking once.
+  window.addEventListener('a11y:motion-change', () => {
+    if (!video) return;
+    if (reducedMotion()) video.pause();
+    else video.play().catch(() => {});
+  });
+</script>

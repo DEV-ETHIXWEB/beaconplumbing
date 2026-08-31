@@ -1,0 +1,101 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SEOHead from '../components/SEOHead.astro';
+import PageHero from '../components/sections/PageHero.astro';
+import Container from '../components/ui/Container.astro';
+import { business } from '../data/business';
+
+const lastUpdated = 'TODO: VERIFY — set the actual publish/review date';
+---
+
+<Layout>
+  <Fragment slot="head">
+    <SEOHead
+      title="Privacy Policy | Beacon Plumbing"
+      description="Beacon Plumbing's privacy policy."
+      path="/privacy-policy"
+    />
+  </Fragment>
+
+  <PageHero title="Privacy Policy" breadcrumbs={[{ name: 'Privacy Policy', url: '/privacy-policy' }]} />
+
+  <section class="bg-white py-16 sm:py-20">
+    <Container class="mx-auto max-w-3xl">
+      <div class="rounded-lg border border-gold-500/40 bg-gold-500/10 px-5 py-4 text-sm text-ink-700">
+        TODO: VERIFY — this is a standard draft, not a legal-reviewed document, and the full legacy privacy
+        policy text was not extracted during the Phase 0 audit. Have {business.name}'s attorney review and
+        adjust before this page goes live.
+      </div>
+
+      <div class="prose-content mt-8 flex flex-col gap-6 text-ink-600">
+        <p class="text-sm text-ink-500">Last updated: {lastUpdated}</p>
+
+        <p class="leading-relaxed">
+          {business.name} ("we," "us," or "our") respects your privacy. This policy explains what information we
+          collect through this website, how we use it, and the choices you have.
+        </p>
+
+        <div>
+          <h2 class="font-display text-lg font-bold text-ink-900">Information We Collect</h2>
+          <p class="mt-2 leading-relaxed">
+            When you request service, contact us, or fill out a form on this Site, we may collect your name, phone
+            number, email address, service address, and details about the service you're requesting. We also
+            collect standard technical information (like pages visited and browser type) through normal website
+            analytics.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-lg font-bold text-ink-900">How We Use Your Information</h2>
+          <p class="mt-2 leading-relaxed">
+            We use the information you provide to respond to service requests, schedule appointments, communicate
+            with you about your service, and improve this website. We don't sell your personal information to
+            third parties.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-lg font-bold text-ink-900">Sharing Your Information</h2>
+          <p class="mt-2 leading-relaxed">
+            We may share information with service providers who help us operate our business (for example,
+            scheduling or payment processing tools), or when required by law. Any financing application you submit
+            through Synchrony is governed by Synchrony's own privacy policy, not this one.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-lg font-bold text-ink-900">Cookies & Analytics</h2>
+          <p class="mt-2 leading-relaxed">
+            This Site may use cookies or similar technology for basic website analytics, to understand how visitors
+            use the Site and improve it over time. You can control cookies through your browser settings.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-lg font-bold text-ink-900">Your Choices</h2>
+          <p class="mt-2 leading-relaxed">
+            You can ask us to update or delete the personal information we hold about you by contacting us using
+            the details below.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-lg font-bold text-ink-900">Changes to This Policy</h2>
+          <p class="mt-2 leading-relaxed">
+            We may update this privacy policy from time to time. Changes will be posted on this page with an
+            updated revision date.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-display text-lg font-bold text-ink-900">Contact Us</h2>
+          <p class="mt-2 leading-relaxed">
+            For questions about this policy, contact {business.name} at{' '}
+            <a href={`mailto:${business.email}`} class="text-brand-600 hover:text-brand-700">{business.email}</a>
+            {' '}or {business.phone.display}.
+          </p>
+        </div>
+      </div>
+    </Container>
+  </section>
+</Layout>

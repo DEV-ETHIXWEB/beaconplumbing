@@ -1,0 +1,132 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import SEOHead from '../../../components/SEOHead.astro';
+import PageHero from '../../../components/sections/PageHero.astro';
+import Container from '../../../components/ui/Container.astro';
+import Button from '../../../components/ui/Button.astro';
+import SectionHeading from '../../../components/ui/SectionHeading.astro';
+import Icon3D from '../../../components/ui/Icon3D.astro';
+import FAQAccordion from '../../../components/sections/FAQAccordion';
+import { serviceCategories, getServicesByCategory, type ServiceCategory } from '../../../data/services';
+import { featuredServiceAreas } from '../../../data/locations';
+import { business } from '../../../data/business';
+import { categoryContent } from '../../../data/categoryContent';
+import { faqPageSchema, safeJsonLdStringify } from '../../../lib/seo';
+
+export function getStaticPaths() {
+  return serviceCategories.map((category) => ({
+    params: { category: category.slug },
+    props: { category },
+  }));
+}
+
+interface Props {
+  category: ServiceCategory;
+}
+
+const { category } = Astro.props;
+const categoryServices = getServicesByCategory(category.slug);
+const content = categoryContent[category.slug];
+const faqSchema = faqPageSchema(content.faqs);
+---
+
+<Layout>
+  <Fragment slot="head">
+    <SEOHead
+      title={`${category.name} Services in Seattle, WA | Beacon Plumbing`}
+      description={`${category.description} Licensed, bonded, and available 24/7 across the greater Seattle area.`}
+      path={`/services/${category.slug}`}
+    />
+  </Fragment>
+
+  <PageHero
+    eyebrow="Services"
+    title={`${category.name} Services`}
+    description={category.description}
+    icon={category.icon}
+    breadcrumbs={[
+      { name: 'Services', url: '/services' },
+      { name: category.name, url: `/services/${category.slug}` },
+    ]}
+  />
+
+  <section class="bg-white py-16 sm:py-20">
+    <Container class="mx-auto max-w-3xl">
+      <div class="prose-content flex flex-col gap-4 text-ink-600">
+        {content.paragraphs.map((paragraph) => (
+          <p class="text-lg leading-relaxed">{paragraph}</p>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <section class="bg-ink-50 py-16 sm:py-20">
+    <Container>
+      <div class="reveal-group grid grid-cols-1 gap-5 sm:grid-cols-3">
+        {content.stats.map((stat) => (
+          <div class="spotlight-card reveal-item flex flex-col gap-1 rounded-xl border border-ink-100 bg-white p-6 shadow-sm transition-shadow duration-300 hover:shadow-md">
+            <div class="relative font-display text-2xl font-extrabold text-brand-600 sm:text-3xl">{stat.value}</div>
+            <p class="relative text-sm leading-relaxed text-ink-600">{stat.label}</p>
+            {stat.source && <p class="relative mt-1 text-xs font-medium uppercase tracking-wide text-ink-400">{stat.source}</p>}
+          </div>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <section class="bg-white py-16 sm:py-20">
+    <Container class="grid grid-cols-1 gap-12 lg:grid-cols-[1.2fr_1fr]">
+      <div>
+        <h2 class="font-display text-xl font-bold text-ink-900">{category.name} Services We Offer</h2>
+        <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {categoryServices.map((service) => (
+            <a
+              href={`/services/${category.slug}/${service.slug}`}
+              class="spotlight-card group flex flex-col gap-2 rounded-xl border border-ink-100 bg-ink-50 p-5 transition-colors hover:border-brand-200 hover:bg-brand-50"
+            >
+              <Icon3D name={service.icon} class="relative h-14 w-auto shrink-0 transition-transform duration-200 group-hover:scale-110" />
+              <h3 class="relative font-display font-semibold text-ink-900 group-hover:text-brand-700">{service.name}</h3>
+              <p class="relative text-sm text-ink-500">{service.shortDescription}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <aside class="flex flex-col gap-6 lg:sticky lg:top-24 lg:self-start">
+        <div class="rounded-xl border border-accent-200 bg-accent-50 p-6">
+          <h2 class="font-display font-semibold text-accent-700">Need help now?</h2>
+          <p class="mt-1 text-sm text-accent-700/80">24/7 emergency response available.</p>
+          <Button href={business.phone.href} variant="primary" size="md" icon="phone" class="mt-4 w-full">
+            Call {business.phone.display}
+          </Button>
+        </div>
+
+        <div class="rounded-xl border border-ink-100 p-6">
+          <h2 class="font-display font-semibold text-ink-900">Popular Service Areas</h2>
+          <ul class="mt-4 grid grid-cols-2 gap-2">
+            {featuredServiceAreas.map((area) => (
+              <li>
+                <a href={`/service-areas/${area.slug}`} class="text-sm text-ink-600 hover:text-brand-600 hover:underline">
+                  {area.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </aside>
+    </Container>
+  </section>
+
+  <section class="bg-ink-50 py-16 sm:py-20">
+    <script type="application/ld+json" is:inline set:html={safeJsonLdStringify(faqSchema)} />
+    <Container class="mx-auto max-w-3xl">
+      <SectionHeading
+        eyebrow="Common Questions"
+        title={`${category.name} FAQs`}
+        align="center"
+        class="mb-10"
+      />
+      <FAQAccordion client:visible items={content.faqs} />
+    </Container>
+  </section>
+</Layout>

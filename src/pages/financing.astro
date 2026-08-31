@@ -1,0 +1,54 @@
+---
+import { Image } from 'astro:assets';
+import Layout from '../layouts/Layout.astro';
+import SEOHead from '../components/SEOHead.astro';
+import PageHero from '../components/sections/PageHero.astro';
+import Container from '../components/ui/Container.astro';
+import Button from '../components/ui/Button.astro';
+import synchronyLogo from '../assets/brand/synchrony-logo.webp';
+import { business } from '../data/business';
+---
+
+<Layout>
+  <Fragment slot="head">
+    <SEOHead
+      title="Financing Options | Beacon Plumbing Seattle"
+      description="Beacon Plumbing offers flexible financing through Synchrony for plumbing, heating, and electrical projects across the greater Seattle area."
+      path="/financing"
+    />
+  </Fragment>
+
+  <PageHero
+    eyebrow="Financing"
+    title="Flexible Financing for Your Project"
+    description="Don't let cost delay an important repair or installation."
+    breadcrumbs={[{ name: 'Financing', url: '/financing' }]}
+  />
+
+  <section class="bg-white py-16 sm:py-20">
+    <Container class="mx-auto max-w-3xl">
+      <div class="flex flex-col items-center gap-6 rounded-2xl border border-ink-100 bg-ink-50 p-8 text-center sm:p-12">
+        <Image src={synchronyLogo} alt="Synchrony Financing" width={220} height={69} class="h-12 w-auto" />
+        <h2 class="font-display text-2xl font-bold text-ink-900">Financing available through Synchrony</h2>
+        <p class="max-w-lg text-ink-600">
+          Beacon Plumbing partners with Synchrony to offer financing options for qualifying plumbing, heating,
+          and electrical projects. Apply directly through Synchrony to see current rates and terms.
+        </p>
+        <p class="text-sm text-ink-500">
+          {/* TODO: VERIFY — specific rates/terms were not published on the legacy site; confirm current offer details with Beacon before publishing specifics on-site. */}
+          Specific financing terms and promotional rates are provided directly by Synchrony at application time.
+        </p>
+        <Button href={business.financing.applyUrl} variant="primary" size="lg">
+          Apply with Synchrony
+        </Button>
+      </div>
+
+      <div class="mt-12 flex flex-col items-center gap-4 text-center">
+        <h2 class="font-display text-xl font-bold text-ink-900">Have questions about financing?</h2>
+        <Button href={business.phone.href} variant="secondary" size="md" icon="phone">
+          Call {business.phone.display}
+        </Button>
+      </div>
+    </Container>
+  </section>
+</Layout>
