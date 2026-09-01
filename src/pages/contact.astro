@@ -5,6 +5,8 @@ import PageHero from '../components/sections/PageHero.astro';
 import Container from '../components/ui/Container.astro';
 import ContactForm from '../components/forms/ContactForm';
 import { business } from '../data/business';
+
+const breadcrumbs = [{ name: 'Contact', url: '/contact' }];
 ---
 
 <Layout>
@@ -20,7 +22,7 @@ import { business } from '../data/business';
     eyebrow="Get in Touch"
     title="Contact Beacon Plumbing"
     description="Call us directly for the fastest response, or send us a request and we'll follow up shortly."
-    breadcrumbs={[{ name: 'Contact', url: '/contact' }]}
+    breadcrumbs={breadcrumbs}
   />
 
   <section class="bg-white py-16 sm:py-20">

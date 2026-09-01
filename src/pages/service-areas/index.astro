@@ -5,6 +5,8 @@ import PageHero from '../../components/sections/PageHero.astro';
 import Container from '../../components/ui/Container.astro';
 import ServiceAreaMap from '../../components/sections/ServiceAreaMap.astro';
 import { serviceAreas, regions } from '../../data/locations';
+
+const breadcrumbs = [{ name: 'Service Areas', url: '/service-areas' }];
 ---
 
 <Layout>
@@ -20,7 +22,7 @@ import { serviceAreas, regions } from '../../data/locations';
     eyebrow="Service Areas"
     title="Serving the Greater Puget Sound Region"
     description={`Beacon Plumbing dispatches licensed technicians to ${serviceAreas.length}+ communities across the Seattle metro area.`}
-    breadcrumbs={[{ name: 'Service Areas', url: '/service-areas' }]}
+    breadcrumbs={breadcrumbs}
   />
 
   <section class="bg-white py-16 sm:py-20">

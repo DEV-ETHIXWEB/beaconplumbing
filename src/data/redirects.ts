@@ -120,7 +120,12 @@ const keepRedirects: Record<string, string> = {
   '/internet-plumbing-promotions-seattle-wa': '/offers',
   '/internet-plumbing-promotions-seattle-wa.html': '/offers',
 
-  '/privacy-policy.html': '/privacy-policy',
+  // No '/privacy-policy.html' entry here on purpose: a real page already
+  // lives at '/privacy-policy', and redirecting the same basename+'.html'
+  // to it collides with static-host URL resolution ('/privacy-policy.html'
+  // and '/privacy-policy/index.html' can resolve to the same clean path),
+  // producing an infinite self-redirect. A 404 on the legacy .html URL is
+  // preferable to breaking the real page.
 
   '/areas': '/service-areas',
   '/areas.html': '/service-areas',

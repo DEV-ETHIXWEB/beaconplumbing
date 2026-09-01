@@ -6,6 +6,8 @@ import Container from '../components/ui/Container.astro';
 import Button from '../components/ui/Button.astro';
 import { business } from '../data/business';
 
+const breadcrumbs = [{ name: 'Careers', url: '/careers' }];
+
 const qualities = [
   { title: 'Licensed & Skilled', description: 'Experienced or licensed in plumbing, HVAC, electrical, or septic work.' },
   { title: 'Customer-Focused', description: 'You treat every home and customer with the same care you’d want for your own.' },
@@ -27,7 +29,7 @@ const qualities = [
     eyebrow="Careers"
     title="Join the Beacon Plumbing Team"
     description={`${business.name} has served the greater Puget Sound region since ${business.foundingYear}. We're always glad to hear from skilled, reliable people who want to build a career with a family-owned company.`}
-    breadcrumbs={[{ name: 'Careers', url: '/careers' }]}
+    breadcrumbs={breadcrumbs}
   />
 
   <section class="bg-white py-16 sm:py-20">

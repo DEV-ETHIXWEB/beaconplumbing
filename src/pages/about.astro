@@ -9,6 +9,8 @@ import Icon3D, { type IconName } from '../components/ui/Icon3D.astro';
 import { business } from '../data/business';
 import { serviceCategories } from '../data/services';
 
+const breadcrumbs = [{ name: 'About', url: '/about' }];
+
 const yearsInBusiness = new Date().getFullYear() - business.foundingYear;
 
 const stats = [
@@ -74,7 +76,7 @@ const values: { title: string; description: string; icon?: IconName }[] = [
     eyebrow="About Us"
     title="Seattle's Trusted Plumbing, Heating & Electrical Team"
     description={`${business.name} has served the greater Puget Sound region since ${business.foundingYear}.`}
-    breadcrumbs={[{ name: 'About', url: '/about' }]}
+    breadcrumbs={breadcrumbs}
     backgroundImage="/images/seattle-space-needle-1024x576.jpg"
   />
 

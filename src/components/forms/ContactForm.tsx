@@ -69,7 +69,7 @@ export default function ContactForm() {
   // Formspree, the CRM Beacon actually uses, etc.) and this component needs
   // no further changes. Never simulate a fake success — the UI must reflect
   // the real outcome once a backend exists.
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (values.company) {

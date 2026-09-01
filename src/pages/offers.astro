@@ -6,6 +6,8 @@ import Container from '../components/ui/Container.astro';
 import Button from '../components/ui/Button.astro';
 import { offers } from '../data/offers';
 import { business } from '../data/business';
+
+const breadcrumbs = [{ name: 'Offers', url: '/offers' }];
 ---
 
 <Layout>
@@ -21,7 +23,7 @@ import { business } from '../data/business';
     eyebrow="Offers"
     title="Current Coupons & Special Offers"
     description="Call ahead and mention the offer you're interested in. Our team will confirm current eligibility and terms."
-    breadcrumbs={[{ name: 'Offers', url: '/offers' }]}
+    breadcrumbs={breadcrumbs}
   />
 
   <section class="bg-white py-16 sm:py-20">

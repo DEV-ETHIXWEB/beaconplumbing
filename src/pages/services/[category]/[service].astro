@@ -23,7 +23,7 @@ interface Props {
   service: Service;
 }
 
-const { service } = Astro.props;
+const { service }: Props = Astro.props;
 const category = serviceCategories.find((c) => c.slug === service.category)!;
 const relatedServices = getServicesByCategory(service.category)
   .filter((s) => s.slug !== service.slug)
@@ -116,6 +116,12 @@ const schema = serviceSchema({
   providerUrl: siteUrl,
   url: `${siteUrl}/services/${service.category}/${service.slug}`,
 });
+
+const breadcrumbs = [
+  { name: 'Services', url: '/services' },
+  { name: category.name, url: `/services/${category.slug}` },
+  { name: service.name, url: `/services/${service.category}/${service.slug}` },
+];
 ---
 
 <Layout>
@@ -133,11 +139,7 @@ const schema = serviceSchema({
     title={service.name}
     description={service.shortDescription}
     icon={service.icon}
-    breadcrumbs={[
-      { name: 'Services', url: '/services' },
-      { name: category.name, url: `/services/${category.slug}` },
-      { name: service.name, url: `/services/${service.category}/${service.slug}` },
-    ]}
+    breadcrumbs={breadcrumbs}
     backgroundImage="/images/seattle-space-needle-1024x576.jpg"
   />
 

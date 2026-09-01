@@ -10,6 +10,8 @@ import { business } from '../data/business';
 function Stars() {
   return Array.from({ length: 5 });
 }
+
+const breadcrumbs = [{ name: 'Reviews', url: '/reviews' }];
 ---
 
 <Layout>
@@ -25,7 +27,7 @@ function Stars() {
     eyebrow="Customer Reviews"
     title="What Our Customers Say"
     description="Real feedback from real Beacon Plumbing customers across Puget Sound."
-    breadcrumbs={[{ name: 'Reviews', url: '/reviews' }]}
+    breadcrumbs={breadcrumbs}
   />
 
   <section class="bg-white py-16 sm:py-20">

@@ -5,6 +5,8 @@ import PageHero from '../../components/sections/PageHero.astro';
 import Container from '../../components/ui/Container.astro';
 import Icon3D from '../../components/ui/Icon3D.astro';
 import { serviceCategories, getServicesByCategory } from '../../data/services';
+
+const breadcrumbs = [{ name: 'Services', url: '/services' }];
 ---
 
 <Layout>
@@ -20,7 +22,7 @@ import { serviceCategories, getServicesByCategory } from '../../data/services';
     eyebrow="Our Services"
     title="Full-Service Plumbing, Heating & Electrical"
     description="One trusted team for every trade in your home, licensed, bonded, and available 24/7 for emergencies."
-    breadcrumbs={[{ name: 'Services', url: '/services' }]}
+    breadcrumbs={breadcrumbs}
   />
 
   <section class="bg-white py-16 sm:py-20">

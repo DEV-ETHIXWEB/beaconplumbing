@@ -39,6 +39,11 @@ const schema = localBusinessSchema({
   sameAs: Object.values(business.social),
   logoUrl: `${siteUrl}/favicon.webp`,
 });
+
+const breadcrumbs = [
+  { name: 'Service Areas', url: '/service-areas' },
+  { name: area.name, url: `/service-areas/${area.slug}` },
+];
 ---
 
 <Layout>
@@ -55,10 +60,7 @@ const schema = localBusinessSchema({
     eyebrow={area.region}
     title={`Plumbing & Home Services in ${area.name}, WA`}
     description={`Licensed plumbing, heating, electrical, and septic service for ${area.name} homeowners and businesses, available 24/7 for emergencies.`}
-    breadcrumbs={[
-      { name: 'Service Areas', url: '/service-areas' },
-      { name: area.name, url: `/service-areas/${area.slug}` },
-    ]}
+    breadcrumbs={breadcrumbs}
   />
 
   <section class="bg-white py-16 sm:py-20">
