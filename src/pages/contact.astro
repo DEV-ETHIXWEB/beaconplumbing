@@ -5,8 +5,10 @@ import PageHero from '../components/sections/PageHero.astro';
 import Container from '../components/ui/Container.astro';
 import ContactForm from '../components/forms/ContactForm';
 import { business } from '../data/business';
+import { getGeneralServiceIconUrls } from '../lib/formServiceIcons';
 
 const breadcrumbs = [{ name: 'Contact', url: '/contact' }];
+const serviceIconUrls = await getGeneralServiceIconUrls();
 ---
 
 <Layout>
@@ -67,7 +69,7 @@ const breadcrumbs = [{ name: 'Contact', url: '/contact' }];
 
       <div class="rounded-2xl border border-ink-100 bg-ink-50 p-6 shadow-sm sm:p-8">
         <h2 class="mb-6 font-display text-xl font-bold text-ink-900">Request Service</h2>
-        <ContactForm client:load />
+        <ContactForm client:load serviceIconUrls={serviceIconUrls} />
       </div>
     </Container>
   </section>

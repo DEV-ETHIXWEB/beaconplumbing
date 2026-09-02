@@ -7,11 +7,13 @@ import Button from '../../../components/ui/Button.astro';
 import SectionHeading from '../../../components/ui/SectionHeading.astro';
 import Icon3D from '../../../components/ui/Icon3D.astro';
 import FAQAccordion from '../../../components/sections/FAQAccordion';
+import ContactForm from '../../../components/forms/ContactForm';
 import { serviceCategories, getServicesByCategory, type ServiceCategory } from '../../../data/services';
 import { featuredServiceAreas } from '../../../data/locations';
 import { business } from '../../../data/business';
 import { categoryContent } from '../../../data/categoryContent';
 import { faqPageSchema, safeJsonLdStringify } from '../../../lib/seo';
+import { getServiceIconUrlMap } from '../../../lib/formServiceIcons';
 
 export function getStaticPaths() {
   return serviceCategories.map((category) => ({
@@ -28,6 +30,7 @@ const { category } = Astro.props;
 const categoryServices = getServicesByCategory(category.slug);
 const content = categoryContent[category.slug];
 const faqSchema = faqPageSchema(content.faqs);
+const serviceIconUrls = await getServiceIconUrlMap({ label: category.name, icon: category.icon });
 
 const breadcrumbs = [
   { name: 'Services', url: '/services' },
@@ -101,6 +104,14 @@ const breadcrumbs = [
           <Button href={business.phone.href} variant="primary" size="md" icon="phone" class="mt-4 w-full">
             Call {business.phone.display}
           </Button>
+        </div>
+
+        <div class="rounded-xl border border-ink-100 bg-white p-6 shadow-sm">
+          <h2 class="font-display font-semibold text-ink-900">Request {category.name} Service</h2>
+          <p class="mt-1 text-sm text-ink-500">We&rsquo;ll follow up shortly.</p>
+          <div class="mt-4">
+            <ContactForm client:load defaultService={category.name} serviceIconUrls={serviceIconUrls} compact />
+          </div>
         </div>
 
         <div class="rounded-xl border border-ink-100 p-6">
