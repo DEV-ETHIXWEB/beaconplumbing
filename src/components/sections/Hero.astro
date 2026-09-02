@@ -6,15 +6,9 @@ import Button from '../ui/Button.astro';
 
 <section class="relative isolate overflow-hidden bg-brand-950 py-20 sm:py-24 lg:py-32">
   <div class="absolute inset-0 z-0" aria-hidden="true">
-    <img
-      src="/video/hero-poster.jpg"
-      alt=""
-      fetchpriority="high"
-      class="h-full w-full object-cover md:hidden"
-    />
     <video
       id="hero-video"
-      class="hidden h-full w-full object-cover md:block"
+      class="h-full w-full object-cover"
       poster="/video/hero-poster.jpg"
       muted
       loop
