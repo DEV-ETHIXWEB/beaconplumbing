@@ -3,4 +3,4 @@
 // before launch whether the new site will live at the same domain.
 export const siteUrl = 'https://www.beaconplumbing.net';
 export const siteName = 'Beacon Plumbing';
-export const defaultOgImage = '/images/og-default.jpg'; // TODO: ASSET REQUIRED
+export const defaultOgImage = '/images/og-default.jpg';

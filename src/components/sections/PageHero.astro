@@ -10,12 +10,29 @@ interface Props {
   description?: string;
   breadcrumbs: BreadcrumbItem[];
   icon?: IconName;
+  backgroundImage?: string;
 }
 
-const { eyebrow, title, description, breadcrumbs, icon } = Astro.props;
+const { eyebrow, title, description, breadcrumbs, icon, backgroundImage } = Astro.props;
 ---
 
-<section class="relative overflow-hidden bg-gradient-to-br from-brand-900 via-brand-800 to-brand-950 py-12 sm:py-16">
+<section class="relative overflow-hidden bg-brand-950 py-12 sm:py-16">
+  {backgroundImage ? (
+    <>
+      <img
+        src={backgroundImage}
+        alt=""
+        aria-hidden="true"
+        class="absolute inset-0 h-full w-full object-cover object-[40%_10%]"
+        loading="eager"
+        fetchpriority="high"
+      />
+      <div class="absolute inset-0 bg-gradient-to-r from-brand-950 via-brand-950/80 to-brand-900/35" aria-hidden="true"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-brand-950/60 via-transparent to-brand-950/20" aria-hidden="true"></div>
+    </>
+  ) : (
+    <div class="absolute inset-0 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-950" aria-hidden="true"></div>
+  )}
   <div class="pointer-events-none absolute inset-0 opacity-[0.06]" aria-hidden="true">
     <svg width="100%" height="100%">
       <pattern id="page-hero-grid" width="40" height="40" patternUnits="userSpaceOnUse">

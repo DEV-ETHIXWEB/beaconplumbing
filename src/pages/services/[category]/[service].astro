@@ -6,11 +6,13 @@ import Container from '../../../components/ui/Container.astro';
 import Button from '../../../components/ui/Button.astro';
 import Icon3D from '../../../components/ui/Icon3D.astro';
 import FAQAccordion from '../../../components/sections/FAQAccordion';
+import ContactForm from '../../../components/forms/ContactForm';
 import { services, serviceCategories, getServicesByCategory, type Service } from '../../../data/services';
 import { featuredServiceAreas } from '../../../data/locations';
 import { business } from '../../../data/business';
 import { siteUrl } from '../../../data/site';
 import { serviceSchema } from '../../../lib/seo';
+import { getServiceIconUrlMap } from '../../../lib/formServiceIcons';
 
 export function getStaticPaths() {
   return services.map((service) => ({
@@ -23,7 +25,7 @@ interface Props {
   service: Service;
 }
 
-const { service } = Astro.props;
+const { service }: Props = Astro.props;
 const category = serviceCategories.find((c) => c.slug === service.category)!;
 const relatedServices = getServicesByCategory(service.category)
   .filter((s) => s.slug !== service.slug)
@@ -39,6 +41,60 @@ function toSentenceCase(name: string) {
 }
 
 const lowerName = toSentenceCase(service.name);
+
+const signsByCategory: Record<string, string[]> = {
+  plumbing: [
+    'Water pooling or dripping where it shouldn’t be',
+    'Noticeably lower water pressure',
+    'Slow drains or gurgling pipes',
+    'Higher-than-normal water bills',
+    'Visible corrosion or discoloration on pipes or fixtures',
+  ],
+  'sewer-drain': [
+    'Multiple drains backing up at the same time',
+    'Sewage odors in the yard or basement',
+    'Gurgling toilets when you run water elsewhere',
+    'Soggy or unusually green patches in the yard',
+    'Slow drainage throughout the house',
+  ],
+  'heating-hvac': [
+    'Uneven heating from room to room',
+    'Rising energy bills with no change in usage',
+    'Strange noises, smells, or short-cycling',
+    'The system struggling to reach the set temperature',
+    'A unit older than 12–15 years with increasingly frequent repairs',
+  ],
+  'air-conditioning': [
+    'Warm air blowing from the vents',
+    'Weak airflow or short-cycling',
+    'Rising indoor humidity',
+    'Unusual noises or odors on startup',
+    'Ice forming on refrigerant lines',
+  ],
+  electrical: [
+    'Flickering or dimming lights',
+    'Breakers that trip repeatedly',
+    'Warm outlets or switch plates',
+    'Buzzing sounds from panels or fixtures',
+    'Outlets that feel loose or have no power',
+  ],
+  septic: [
+    'Slow drains throughout the house',
+    'Sewage odor near the tank or drain field',
+    'Standing water or soggy ground over the tank',
+    'Gurgling sounds in the plumbing',
+    'It’s been 3–5 years since the last pumping',
+  ],
+};
+
+const signs = signsByCategory[service.category] ?? [];
+
+const processSteps = [
+  { icon: '90-minute-response', title: 'Call or book online', description: 'Reach a real person 24/7. Urgent calls get a 90-minute response.' },
+  { icon: 'upfront-pricing', title: 'Get an upfront price', description: 'Your technician diagnoses the issue and quotes a flat price before any work begins.' },
+  { icon: 'no-trip-charges', title: 'The job gets done right', description: 'A licensed Beacon technician completes the work, with no trip charge just for the quote.' },
+  { icon: '1-year-guarantee', title: 'Backed by our guarantee', description: 'Every repair and installation is covered by our 1-year guarantee.' },
+] as const;
 
 const faqs = [
   {
@@ -62,6 +118,14 @@ const schema = serviceSchema({
   providerUrl: siteUrl,
   url: `${siteUrl}/services/${service.category}/${service.slug}`,
 });
+
+const breadcrumbs = [
+  { name: 'Services', url: '/services' },
+  { name: category.name, url: `/services/${category.slug}` },
+  { name: service.name, url: `/services/${service.category}/${service.slug}` },
+];
+
+const serviceIconUrls = await getServiceIconUrlMap({ label: service.name, icon: service.icon });
 ---
 
 <Layout>
@@ -79,22 +143,55 @@ const schema = serviceSchema({
     title={service.name}
     description={service.shortDescription}
     icon={service.icon}
-    breadcrumbs={[
-      { name: 'Services', url: '/services' },
-      { name: category.name, url: `/services/${category.slug}` },
-      { name: service.name, url: `/services/${service.category}/${service.slug}` },
-    ]}
+    breadcrumbs={breadcrumbs}
+    backgroundImage="/images/seattle-space-needle-1024x576.jpg"
   />
 
   <section class="bg-white py-16 sm:py-20">
     <Container class="grid grid-cols-1 gap-12 lg:grid-cols-[1.2fr_1fr]">
       <div class="flex flex-col gap-10">
         <div class="prose-content flex flex-col gap-4 text-ink-600">
-          <p class="text-lg leading-relaxed">
-            Beacon Plumbing provides professional {lowerName} service across the greater Seattle
-            area. Our licensed technicians diagnose the issue accurately and get it fixed right the first time,
-            with upfront communication throughout the job.
+          <p class="text-lg leading-relaxed">{service.longDescription}</p>
+          <p class="leading-relaxed">
+            Beacon Plumbing provides professional {lowerName} service across the greater Seattle area, part of
+            our {category.name.toLowerCase()} trade. You get the same licensed, background-checked technicians
+            and the same upfront price before any work begins, whether it&rsquo;s a routine repair or an urgent call.
           </p>
+        </div>
+
+        {signs.length > 0 && (
+          <div>
+            <h2 class="font-display text-xl font-bold text-ink-900">Signs You May Need {service.name}</h2>
+            <ul class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {signs.map((sign) => (
+                <li class="flex items-start gap-2.5 rounded-lg border border-ink-100 bg-ink-50 px-4 py-3 text-sm text-ink-700">
+                  <svg viewBox="0 0 20 20" class="mt-0.5 h-4 w-4 shrink-0 text-brand-500" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0L3.3 9.7a1 1 0 1 1 1.4-1.4L8 11.6l6.8-6.8a1 1 0 0 1 1.4 0z" clip-rule="evenodd" />
+                  </svg>
+                  {sign}
+                </li>
+              ))}
+            </ul>
+            <p class="mt-3 text-sm text-ink-500">
+              Noticing any of these? Call {business.phone.display} and a Beacon technician can take a look.
+            </p>
+          </div>
+        )}
+
+        <div>
+          <h2 class="font-display text-xl font-bold text-ink-900">How It Works</h2>
+          <div class="reveal-group mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {processSteps.map((step, index) => (
+              <div class="reveal-item spotlight-card flex gap-4 rounded-xl border border-ink-100 bg-white p-5 shadow-sm transition-shadow duration-300 hover:shadow-md">
+                <Icon3D name={step.icon} class="relative h-14 w-auto shrink-0" />
+                <div class="relative">
+                  <span class="text-xs font-semibold uppercase tracking-widest text-accent-600">Step {index + 1}</span>
+                  <h3 class="mt-0.5 font-display font-semibold text-ink-900">{step.title}</h3>
+                  <p class="mt-1 text-sm leading-relaxed text-ink-500">{step.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div>
@@ -137,16 +234,21 @@ const schema = serviceSchema({
         </div>
       </div>
 
-      <aside class="flex flex-col gap-6">
+      <aside class="flex flex-col gap-6 lg:sticky lg:top-24 lg:self-start">
         <div class="rounded-xl border border-accent-200 bg-accent-50 p-6">
           <h2 class="font-display font-semibold text-accent-700">Need {service.name}?</h2>
           <p class="mt-1 text-sm text-accent-700/80">Call now for fast, reliable service.</p>
           <Button href={business.phone.href} variant="primary" size="md" icon="phone" class="mt-4 w-full">
             Call {business.phone.display}
           </Button>
-          <Button href="/contact" variant="outline" size="md" class="mt-2.5 w-full">
-            Request Service Online
-          </Button>
+        </div>
+
+        <div class="rounded-xl border border-ink-100 bg-white p-6 shadow-sm">
+          <h2 class="font-display font-semibold text-ink-900">Request {service.name}</h2>
+          <p class="mt-1 text-sm text-ink-500">We&rsquo;ll follow up shortly.</p>
+          <div class="mt-4">
+            <ContactForm client:load defaultService={service.name} serviceIconUrls={serviceIconUrls} compact />
+          </div>
         </div>
 
         <div class="rounded-xl border border-ink-100 p-6">

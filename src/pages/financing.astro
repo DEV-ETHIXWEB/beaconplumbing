@@ -7,6 +7,8 @@ import Container from '../components/ui/Container.astro';
 import Button from '../components/ui/Button.astro';
 import synchronyLogo from '../assets/brand/synchrony-logo.webp';
 import { business } from '../data/business';
+
+const breadcrumbs = [{ name: 'Financing', url: '/financing' }];
 ---
 
 <Layout>
@@ -22,7 +24,7 @@ import { business } from '../data/business';
     eyebrow="Financing"
     title="Flexible Financing for Your Project"
     description="Don't let cost delay an important repair or installation."
-    breadcrumbs={[{ name: 'Financing', url: '/financing' }]}
+    breadcrumbs={breadcrumbs}
   />
 
   <section class="bg-white py-16 sm:py-20">

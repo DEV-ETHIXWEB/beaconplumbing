@@ -1,14 +1,20 @@
-import { useId, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
-type FieldName = 'name' | 'phone' | 'email' | 'service' | 'message';
+type FieldName = 'name' | 'phone' | 'email' | 'services' | 'otherDetail' | 'message';
 
 interface FormValues {
   name: string;
   phone: string;
   email: string;
-  service: string;
+  // Multi-select: a visitor can genuinely need more than one trade (e.g.
+  // "Electrical" + "Emergency Plumbing") in the same request.
+  services: string[];
+  // Shown only when "Other" is checked, so a need that isn't one of the
+  // listed options can still be typed in rather than forced into a
+  // mismatched category.
+  otherDetail: string;
   message: string;
   // Honeypot field — real users never fill this in (hidden from view,
   // skipped by screen readers via aria-hidden + tabIndex=-1). Bots that
@@ -17,7 +23,24 @@ interface FormValues {
   company: string;
 }
 
-const initialValues: FormValues = { name: '', phone: '', email: '', service: '', message: '', company: '' };
+interface ContactFormProps {
+  // Pre-selects a service option when the form is embedded on a page that
+  // already has that context (e.g. a specific service or category page),
+  // so the visitor doesn't have to re-pick something they already navigated
+  // to. Falls back to the plain /contact behavior when omitted.
+  defaultService?: string;
+  // Single-column layout with the "Tell us more" field dropped, for
+  // embedding in a narrow sidebar (service pages) rather than a full-width
+  // page section (the main /contact page).
+  compact?: boolean;
+  // Resolved icon URLs keyed by option label, built server-side (see
+  // src/lib/formServiceIcons.ts) since a React island can't use Astro's
+  // <Image> pipeline directly. An option with no matching entry (e.g.
+  // "Other") just renders without an icon.
+  serviceIconUrls?: Record<string, string>;
+}
+
+const OTHER = 'Other';
 
 const services = [
   'Emergency Plumbing',
@@ -28,7 +51,7 @@ const services = [
   'Air Conditioning',
   'Electrical',
   'Septic',
-  'Other',
+  OTHER,
 ];
 
 const phonePattern = /^[\d\s()+.-]{7,}$/;
@@ -41,12 +64,31 @@ function validate(values: FormValues): Partial<Record<FieldName, string>> {
   else if (!phonePattern.test(values.phone)) errors.phone = 'Please enter a valid phone number.';
   if (!values.email.trim()) errors.email = 'Please enter your email address.';
   else if (!emailPattern.test(values.email)) errors.email = 'Please enter a valid email address.';
-  if (!values.service) errors.service = 'Please select a service.';
+  if (values.services.length === 0) errors.services = 'Please select at least one option.';
+  if (values.services.includes(OTHER) && !values.otherDetail.trim()) {
+    errors.otherDetail = 'Please tell us what you need.';
+  }
   return errors;
 }
 
-export default function ContactForm() {
-  const [values, setValues] = useState<FormValues>(initialValues);
+export default function ContactForm({ defaultService, compact = false, serviceIconUrls }: ContactFormProps) {
+  // Service pages pass their own name (e.g. "Panel Upgrades"), which isn't
+  // always one of the general categories below — add it as its own option
+  // rather than forcing a mismatch or silently dropping the context.
+  const serviceOptions = useMemo(
+    () => (defaultService && !services.includes(defaultService) ? [defaultService, ...services] : services),
+    [defaultService]
+  );
+
+  const [values, setValues] = useState<FormValues>(() => ({
+    name: '',
+    phone: '',
+    email: '',
+    message: '',
+    company: '',
+    otherDetail: '',
+    services: defaultService ? [defaultService] : [],
+  }));
   const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
   const [touched, setTouched] = useState<Partial<Record<FieldName, boolean>>>({});
   const [status, setStatus] = useState<Status>('idle');
@@ -54,6 +96,15 @@ export default function ContactForm() {
 
   function handleChange(field: keyof FormValues, value: string) {
     setValues((prev) => ({ ...prev, [field]: value }));
+  }
+
+  function toggleService(service: string) {
+    setValues((prev) => ({
+      ...prev,
+      services: prev.services.includes(service)
+        ? prev.services.filter((s) => s !== service)
+        : [...prev.services, service],
+    }));
   }
 
   function handleBlur(field: FieldName) {
@@ -69,7 +120,7 @@ export default function ContactForm() {
   // Formspree, the CRM Beacon actually uses, etc.) and this component needs
   // no further changes. Never simulate a fake success — the UI must reflect
   // the real outcome once a backend exists.
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (values.company) {
@@ -80,7 +131,7 @@ export default function ContactForm() {
 
     const validationErrors = validate(values);
     setErrors(validationErrors);
-    setTouched({ name: true, phone: true, email: true, service: true, message: true });
+    setTouched({ name: true, phone: true, email: true, services: true, otherDetail: true, message: true });
     if (Object.keys(validationErrors).length > 0) return;
 
     setStatus('submitting');
@@ -89,10 +140,19 @@ export default function ContactForm() {
       if (!endpoint) {
         throw new Error('No form endpoint configured');
       }
+      const payload = {
+        name: values.name,
+        phone: values.phone,
+        email: values.email,
+        message: values.message,
+        company: values.company,
+        services: values.services,
+        otherDetail: values.services.includes(OTHER) ? values.otherDetail : undefined,
+      };
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
+        body: JSON.stringify(payload),
       });
       if (!response.ok) throw new Error('Submission failed');
       setStatus('success');
@@ -103,7 +163,7 @@ export default function ContactForm() {
 
   if (status === 'success') {
     return (
-      <div role="status" className="rounded-xl border border-brand-200 bg-brand-50 p-8 text-center">
+      <div role="status" className={`rounded-xl border border-brand-200 bg-brand-50 text-center ${compact ? 'p-5' : 'p-8'}`}>
         <p className="font-display text-lg font-semibold text-brand-700">Thank you. We received your request.</p>
         <p className="mt-2 text-sm text-ink-500">A member of our team will reach out shortly.</p>
       </div>
@@ -134,7 +194,7 @@ export default function ContactForm() {
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <div className={`grid grid-cols-1 gap-5 ${compact ? '' : 'sm:grid-cols-2'}`}>
         <div className="flex flex-col gap-1.5">
           <label htmlFor={`${formId}-name`} className="text-sm font-medium text-ink-700">
             Full name
@@ -208,60 +268,102 @@ export default function ContactForm() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <span id={`${formId}-service-label`} className="text-sm font-medium text-ink-700">
-          What do you need help with?
+        <span id={`${formId}-services-label`} className="text-sm font-medium text-ink-700">
+          What do you need help with? <span className="font-normal text-ink-400">(select all that apply)</span>
         </span>
         <div
-          role="radiogroup"
-          aria-labelledby={`${formId}-service-label`}
-          aria-invalid={Boolean(fieldError('service'))}
-          aria-describedby={fieldError('service') ? `${formId}-service-error` : undefined}
-          className={`grid grid-cols-2 gap-2 sm:grid-cols-3 ${fieldError('service') ? 'rounded-md ring-1 ring-accent-400' : ''}`}
+          role="group"
+          aria-labelledby={`${formId}-services-label`}
+          aria-invalid={Boolean(fieldError('services'))}
+          aria-describedby={fieldError('services') ? `${formId}-services-error` : undefined}
+          className={`grid gap-2 ${compact ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-3'} ${fieldError('services') ? 'rounded-md ring-1 ring-accent-400' : ''}`}
         >
-          {services.map((service) => {
-            const checked = values.service === service;
+          {serviceOptions.map((service) => {
+            const checked = values.services.includes(service);
+            const iconUrl = serviceIconUrls?.[service];
             return (
               <label
                 key={service}
-                className={`flex cursor-pointer items-center justify-center rounded-md border px-3 py-2.5 text-center text-sm font-medium transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-brand-500 ${
+                className={`flex cursor-pointer flex-col items-center gap-1.5 rounded-md border px-2.5 py-3 text-center text-xs font-medium transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-brand-500 ${
                   checked
                     ? 'border-brand-500 bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-500'
                     : 'border-ink-200 text-ink-700 hover:border-brand-300 hover:bg-brand-50/60'
                 }`}
               >
                 <input
-                  type="radio"
-                  name="service"
+                  type="checkbox"
+                  name="services"
                   value={service}
                   checked={checked}
-                  required
-                  onChange={() => handleChange('service', service)}
-                  onBlur={() => handleBlur('service')}
+                  onChange={() => toggleService(service)}
+                  onBlur={() => handleBlur('services')}
                   className="sr-only"
                 />
-                {service}
+                {iconUrl ? (
+                  <img src={iconUrl} alt="" className="h-8 w-8 shrink-0 object-contain" />
+                ) : service === OTHER ? (
+                  // No real icon for a catch-all option — a plain outline
+                  // glyph rather than pretending it's part of the 3D set.
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink-100 text-ink-500">
+                    <svg viewBox="0 0 20 20" className="h-4.5 w-4.5" fill="currentColor" aria-hidden="true">
+                      <circle cx="4" cy="10" r="1.6" />
+                      <circle cx="10" cy="10" r="1.6" />
+                      <circle cx="16" cy="10" r="1.6" />
+                    </svg>
+                  </span>
+                ) : (
+                  <span className="h-8 w-8 shrink-0" aria-hidden="true" />
+                )}
+                <span className="leading-tight">{service}</span>
               </label>
             );
           })}
         </div>
-        {fieldError('service') && (
-          <p id={`${formId}-service-error`} className="text-xs text-accent-600">{fieldError('service')}</p>
+        {fieldError('services') && (
+          <p id={`${formId}-services-error`} className="text-xs text-accent-600">{fieldError('services')}</p>
         )}
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor={`${formId}-message`} className="text-sm font-medium text-ink-700">
-          Tell us more
-        </label>
-        <textarea
-          id={`${formId}-message`}
-          name="message"
-          rows={4}
-          value={values.message}
-          onChange={(e) => handleChange('message', e.target.value)}
-          className="resize-none rounded-md border border-ink-200 px-3.5 py-2.5 text-sm text-ink-900 outline-none transition-colors focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
-        />
-      </div>
+      {values.services.includes(OTHER) && (
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor={`${formId}-other`} className="text-sm font-medium text-ink-700">
+            Tell us what you need
+          </label>
+          <input
+            id={`${formId}-other`}
+            name="otherDetail"
+            type="text"
+            placeholder="Describe the issue or service you're looking for"
+            aria-invalid={Boolean(fieldError('otherDetail'))}
+            aria-describedby={fieldError('otherDetail') ? `${formId}-other-error` : undefined}
+            value={values.otherDetail}
+            onChange={(e) => handleChange('otherDetail', e.target.value)}
+            onBlur={() => handleBlur('otherDetail')}
+            className={`rounded-md border px-3.5 py-2.5 text-sm text-ink-900 outline-none transition-colors focus:ring-2 ${
+              fieldError('otherDetail') ? 'border-accent-400 focus:border-accent-500 focus:ring-accent-100' : 'border-ink-200 focus:border-brand-500 focus:ring-brand-100'
+            }`}
+          />
+          {fieldError('otherDetail') && (
+            <p id={`${formId}-other-error`} className="text-xs text-accent-600">{fieldError('otherDetail')}</p>
+          )}
+        </div>
+      )}
+
+      {!compact && (
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor={`${formId}-message`} className="text-sm font-medium text-ink-700">
+            Tell us more
+          </label>
+          <textarea
+            id={`${formId}-message`}
+            name="message"
+            rows={4}
+            value={values.message}
+            onChange={(e) => handleChange('message', e.target.value)}
+            className="resize-none rounded-md border border-ink-200 px-3.5 py-2.5 text-sm text-ink-900 outline-none transition-colors focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+          />
+        </div>
+      )}
 
       <button
         type="submit"
@@ -270,9 +372,11 @@ export default function ContactForm() {
       >
         {status === 'submitting' ? 'Submitting…' : 'Request Service'}
       </button>
-      <p className="text-xs text-ink-500">
-        For urgent issues, please call us directly rather than submitting a form.
-      </p>
+      {!compact && (
+        <p className="text-xs text-ink-500">
+          For urgent issues, please call us directly rather than submitting a form.
+        </p>
+      )}
     </form>
   );
 }

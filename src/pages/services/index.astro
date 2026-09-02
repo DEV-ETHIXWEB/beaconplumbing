@@ -3,8 +3,14 @@ import Layout from '../../layouts/Layout.astro';
 import SEOHead from '../../components/SEOHead.astro';
 import PageHero from '../../components/sections/PageHero.astro';
 import Container from '../../components/ui/Container.astro';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
 import Icon3D from '../../components/ui/Icon3D.astro';
+import ContactForm from '../../components/forms/ContactForm';
 import { serviceCategories, getServicesByCategory } from '../../data/services';
+import { getGeneralServiceIconUrls } from '../../lib/formServiceIcons';
+
+const breadcrumbs = [{ name: 'Services', url: '/services' }];
+const serviceIconUrls = await getGeneralServiceIconUrls();
 ---
 
 <Layout>
@@ -20,7 +26,7 @@ import { serviceCategories, getServicesByCategory } from '../../data/services';
     eyebrow="Our Services"
     title="Full-Service Plumbing, Heating & Electrical"
     description="One trusted team for every trade in your home, licensed, bonded, and available 24/7 for emergencies."
-    breadcrumbs={[{ name: 'Services', url: '/services' }]}
+    breadcrumbs={breadcrumbs}
   />
 
   <section class="bg-white py-16 sm:py-20">
@@ -72,6 +78,21 @@ import { serviceCategories, getServicesByCategory } from '../../data/services';
           </div>
         );
       })}
+    </Container>
+  </section>
+
+  <section id="request-service" class="bg-ink-50 py-16 sm:py-20">
+    <Container class="mx-auto max-w-2xl">
+      <SectionHeading
+        eyebrow="Get Started"
+        title="Request Service"
+        description="Tell us what you need and we'll follow up shortly, or call for the fastest response."
+        align="center"
+        class="mb-8"
+      />
+      <div class="rounded-2xl border border-ink-100 bg-white p-6 shadow-sm sm:p-8">
+        <ContactForm client:load serviceIconUrls={serviceIconUrls} />
+      </div>
     </Container>
   </section>
 </Layout>
