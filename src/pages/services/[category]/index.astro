@@ -8,6 +8,7 @@ import SectionHeading from '../../../components/ui/SectionHeading.astro';
 import Icon3D from '../../../components/ui/Icon3D.astro';
 import FAQAccordion from '../../../components/sections/FAQAccordion';
 import ContactForm from '../../../components/forms/ContactForm';
+import Reviews from '../../../components/sections/Reviews.astro';
 import { serviceCategories, getServicesByCategory, type ServiceCategory } from '../../../data/services';
 import { featuredServiceAreas } from '../../../data/locations';
 import { business } from '../../../data/business';
@@ -142,4 +143,6 @@ const breadcrumbs = [
       <FAQAccordion client:visible items={content.faqs} />
     </Container>
   </section>
+
+  <Reviews />
 </Layout>

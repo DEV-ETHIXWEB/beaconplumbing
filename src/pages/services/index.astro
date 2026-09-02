@@ -6,6 +6,7 @@ import Container from '../../components/ui/Container.astro';
 import SectionHeading from '../../components/ui/SectionHeading.astro';
 import Icon3D from '../../components/ui/Icon3D.astro';
 import ContactForm from '../../components/forms/ContactForm';
+import Reviews from '../../components/sections/Reviews.astro';
 import { serviceCategories, getServicesByCategory } from '../../data/services';
 import { getGeneralServiceIconUrls } from '../../lib/formServiceIcons';
 
@@ -95,4 +96,6 @@ const serviceIconUrls = await getGeneralServiceIconUrls();
       </div>
     </Container>
   </section>
+
+  <Reviews />
 </Layout>

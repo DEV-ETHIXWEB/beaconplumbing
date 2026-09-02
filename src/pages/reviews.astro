@@ -4,6 +4,9 @@ import SEOHead from '../components/SEOHead.astro';
 import PageHero from '../components/sections/PageHero.astro';
 import Container from '../components/ui/Container.astro';
 import Button from '../components/ui/Button.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import Reviews from '../components/sections/Reviews.astro';
+import GuaranteeStrip from '../components/sections/GuaranteeStrip.astro';
 import { testimonials } from '../data/testimonials';
 import { business } from '../data/business';
 
@@ -30,8 +33,19 @@ const breadcrumbs = [{ name: 'Reviews', url: '/reviews' }];
     breadcrumbs={breadcrumbs}
   />
 
-  <section class="bg-white py-16 sm:py-20">
+  <Reviews showReadAllLink={false} />
+
+  <GuaranteeStrip />
+
+  <section class="bg-ink-50 py-16 sm:py-20">
     <Container>
+      <SectionHeading
+        eyebrow="Every Review"
+        title="All Verified Reviews"
+        description="Every review below is real and unedited, sourced directly from Beacon's verified Google reviews."
+        class="mb-10"
+      />
+
       <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {testimonials.map((review) => (
           <figure class="flex flex-col gap-4 rounded-xl border border-ink-100 bg-white p-6 shadow-sm">

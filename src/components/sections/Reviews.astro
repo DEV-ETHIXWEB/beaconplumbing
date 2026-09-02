@@ -5,6 +5,17 @@ import Button from '../ui/Button.astro';
 import { testimonials } from '../../data/testimonials';
 import { business } from '../../data/business';
 
+interface Props {
+  // Hidden on /reviews itself (linking to the page you're already on is
+  // redundant) but shown everywhere else this section is embedded.
+  showReadAllLink?: boolean;
+  // Lets pages embedding this section keep a white/ink-50 alternating
+  // rhythm regardless of what comes immediately before it.
+  background?: 'white' | 'ink-50';
+}
+
+const { showReadAllLink = true, background = 'white' } = Astro.props;
+
 function Stars() {
   return Array.from({ length: 5 });
 }
@@ -15,7 +26,7 @@ function Stars() {
 const loopedReviews = [...testimonials, ...testimonials];
 ---
 
-<section class="bg-white py-16 sm:py-24">
+<section class:list={['py-16 sm:py-24', background === 'white' ? 'bg-white' : 'bg-ink-50']}>
   <Container>
     <div class="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
       <SectionHeading
@@ -38,15 +49,17 @@ const loopedReviews = [...testimonials, ...testimonials];
           </svg>
           <span data-label>Pause</span>
         </button>
-        <a
-          href="/reviews"
-          class="hidden shrink-0 items-center gap-1.5 font-display text-sm font-semibold text-brand-600 hover:text-brand-700 sm:inline-flex"
-        >
-          Read all reviews
-          <svg viewBox="0 0 20 20" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path d="M4 10h12M11 5l5 5-5 5" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-        </a>
+        {showReadAllLink && (
+          <a
+            href="/reviews"
+            class="hidden shrink-0 items-center gap-1.5 font-display text-sm font-semibold text-brand-600 hover:text-brand-700 sm:inline-flex"
+          >
+            Read all reviews
+            <svg viewBox="0 0 20 20" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M4 10h12M11 5l5 5-5 5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </a>
+        )}
       </div>
     </div>
 

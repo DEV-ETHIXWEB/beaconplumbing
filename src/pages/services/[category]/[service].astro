@@ -7,6 +7,7 @@ import Button from '../../../components/ui/Button.astro';
 import Icon3D from '../../../components/ui/Icon3D.astro';
 import FAQAccordion from '../../../components/sections/FAQAccordion';
 import ContactForm from '../../../components/forms/ContactForm';
+import Reviews from '../../../components/sections/Reviews.astro';
 import { services, serviceCategories, getServicesByCategory, type Service } from '../../../data/services';
 import { featuredServiceAreas } from '../../../data/locations';
 import { business } from '../../../data/business';
@@ -266,4 +267,6 @@ const serviceIconUrls = await getServiceIconUrlMap({ label: service.name, icon: 
       </aside>
     </Container>
   </section>
+
+  <Reviews background="ink-50" />
 </Layout>
