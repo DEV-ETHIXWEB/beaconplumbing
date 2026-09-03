@@ -1,7 +1,7 @@
 ---
 // The real Beacon Plumbing logo (tornado mark + wordmark), background removed
-// so it drops cleanly onto any surface. Same artwork as always — just a clean
-// transparent export instead of the old raster with a baked-in white box.
+// so it drops cleanly onto any surface. The art is a 2320x652 master upscaled
+// from the original, so it stays sharp on retina and when zoomed in.
 import { Image } from 'astro:assets';
 import logoMark from '../../assets/brand/logo-mark.png';
 
@@ -10,13 +10,13 @@ interface Props {
   class?: string;
 }
 
-const { variant = 'light', class: className = 'h-9 sm:h-10' } = Astro.props;
+const { variant = 'light', class: className = 'h-[3.3rem] sm:h-[3.6rem]' } = Astro.props;
 ---
 
 {variant === 'dark' ? (
   <span class="inline-flex items-center rounded-lg bg-white px-3 py-2">
-    <Image src={logoMark} alt="Beacon Plumbing" width={580} height={163} class={`w-auto ${className}`} />
+    <Image src={logoMark} alt="Beacon Plumbing" width={1160} class={`w-auto ${className}`} />
   </span>
 ) : (
-  <Image src={logoMark} alt="Beacon Plumbing" width={580} height={163} class={`w-auto ${className}`} />
+  <Image src={logoMark} alt="Beacon Plumbing" width={1160} class={`w-auto ${className}`} />
 )}
