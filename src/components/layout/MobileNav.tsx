@@ -35,7 +35,7 @@ export default function MobileNav({ business, mainNav }: Props) {
         aria-expanded={open}
         aria-controls="mobile-nav-drawer"
         aria-label="Open menu"
-        className="inline-flex h-11 w-11 items-center justify-center rounded-md text-ink-700 hover:bg-ink-100 xl:hidden"
+        className="inline-flex h-11 w-11 items-center justify-center rounded-md text-ink-700 hover:bg-ink-100 min-[1400px]:hidden"
       >
         <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
           <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />
@@ -43,7 +43,7 @@ export default function MobileNav({ business, mainNav }: Props) {
       </button>
 
       {open && createPortal(
-        <div className="fixed inset-0 z-100 xl:hidden">
+        <div className="fixed inset-0 z-100 min-[1400px]:hidden">
           <div
             className="absolute inset-0 bg-ink-950/50 animate-fade-up"
             onClick={() => setOpen(false)}
