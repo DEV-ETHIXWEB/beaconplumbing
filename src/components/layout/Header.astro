@@ -7,7 +7,7 @@ import MobileNav from './MobileNav';
 ---
 
 <header id="site-header" class="sticky top-0 z-50 border-b border-ink-100 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/80">
-  <div class="site-header__utility hidden bg-brand-900 text-white min-[1400px]:block">
+  <div class="site-header__utility hidden bg-brand-900 text-white xl:block">
     <Container class="flex items-center justify-between py-1.5 text-xs">
       <p class="font-medium tracking-wide">
         24/7 Emergency Service &middot; Licensed, Bonded &amp; Insured &middot; Serving Puget Sound Since {business.foundingYear}
@@ -23,12 +23,12 @@ import MobileNav from './MobileNav';
       <Logo variant="light" />
     </a>
 
-    <nav class="hidden min-w-0 items-center gap-0.5 min-[1400px]:flex" aria-label="Primary">
+    <nav class="hidden min-w-0 items-center xl:flex" aria-label="Primary">
       {mainNav.map((item) => (
         <div class="group relative">
           <a
             href={item.href}
-            class="flex items-center gap-1 whitespace-nowrap rounded-md px-2.5 py-2 text-sm font-semibold text-ink-700 transition-colors hover:bg-brand-50 hover:text-brand-600"
+            class="flex items-center gap-1 whitespace-nowrap rounded-md px-2 py-2 text-sm font-semibold text-ink-700 transition-colors hover:bg-brand-50 hover:text-brand-600"
           >
             {item.label}
             {item.children && (
